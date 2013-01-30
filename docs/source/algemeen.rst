@@ -6,7 +6,8 @@ Algemeen
 ********
 
 Hieronder staat algemene informatie over het hoe en waarom van de OpenGeoGroep Basiskaart.
-Zie ook de website: http://basiskaart.opengeogroep.nl
+Zie ook de website: http://basiskaart.opengeogroep.nl. Deze documentatie wordt automatisch gegenereerd vanuit het bijbehorende
+GitHub project: https://github.com/opengeogroep/basiskaart
 
 Waarom OpenGeoGroep Basiskaart ?
 ================================
