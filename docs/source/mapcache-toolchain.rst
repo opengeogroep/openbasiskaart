@@ -5,7 +5,7 @@ Mapcache Toolchain
 ******************
 
 Hieronder staat de "toolchain" beschreven om OSM RD Tiles te genereren en te serveren volgens
-de "Mapcache Toolchain". Dit is een toolchain op basis van Imposm, MapServer en MapCache.
+de "MapCache Toolchain". Dit is een toolchain op basis van Imposm, MapServer en MapCache.
 
 
 Installaties
@@ -40,5 +40,5 @@ these can simply be installed via the ubuntu package manager. ::
 Imposm
 ------
 
-Imposm wordt gebruikt voor inlezen OSM Planet dump in Postgres. ::
+Imposm wordt gebruikt voor inlezen OSM Planet dump in Postgres...
 
