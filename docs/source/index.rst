@@ -3,20 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to basiskaart's documentation!
-======================================
+Documentatie Basiskaart
+=======================
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
-
+   algemeen.rst
+   mapnik-toolchain.rst
+   mapcache-toolchain.rst
+   links.rst
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 
