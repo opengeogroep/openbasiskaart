@@ -9,8 +9,8 @@ Hieronder staat algemene informatie over het hoe en waarom van de OpenGeoGroep B
 Zie ook de website: http://openbasiskaart.nl. Deze documentatie wordt automatisch gegenereerd vanuit het bijbehorende
 GitHub project: https://github.com/opengeogroep/openbasiskaart
 
-Waarom OpenGeoGroep Basiskaart ?
-================================
+Waarom OpenBasiskaart ?
+=======================
 
 Vanuit zowel OGG-klanten als de OGG-leden is vaker de wens uitgesproken om OpenStreetMap in
 de Nederlandse (RD-)projectie beschikbaar te maken.
