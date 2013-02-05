@@ -5,7 +5,7 @@
 Algemeen
 ********
 
-Hieronder staat algemene informatie over het hoe en waarom van de OpenGeoGroep Basiskaart.
+Hieronder staat algemene informatie over het hoe en waarom van de OpenGeoGroep OpenBasiskaart.
 Zie ook de website: http://openbasiskaart.nl. Deze documentatie wordt automatisch gegenereerd vanuit het bijbehorende
 GitHub project: https://github.com/opengeogroep/openbasiskaart
 
