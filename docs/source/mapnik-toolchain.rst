@@ -47,7 +47,7 @@ Dan Kai Krueger's repo (https://launchpad.net/~kakrueger/+archive/openstreetmap 
 Altijd UbuntuGIS toevoegen https://wiki.ubuntu.com/UbuntuGIS ! ::
 
 	# to add the UbuntuGIS PPA and update your packaging system.
-    sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+        sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 	sudo apt-get update
 
 Check of de repo's goed zijn toegevoegd. ::
@@ -76,7 +76,7 @@ Geos: 3.3.3-1.1
 
 Postgresql/PostGIS
 ------------------
-Belangrijk is om package "postgis" te installeren. Dan komt alles mee. ::
+Belangrijk is om package "postgis" te installeren. Dan komt alles, bijv. Postgres 9.1, mee. ::
 
     sudo apt-get install postgis postgresql-contrib postgresql-server-dev-9.1
 
@@ -109,53 +109,26 @@ Zie ook http://wiki.openstreetmap.org/wiki/Osm2pgsql ::
 Installeert: osm2pgsql (0.81.0-1~quantal3). NB Dit is de juiste versie voor 64-bit ID ondersteuning.
 Zie http://web.archiveorange.com/archive/v/wQWIb2eq6T9IKbr4XkWx.
 
-Of build van source, niet echt nodig op Ubuntu 12.10 met PPA als boven. ::
-
-    mkdir /opt/osm2pgsql
-    sudo svn co http://svn.openstreetmap.org/applications/utils/export/osm2pgsql svn
-    cd svn
-    sudo ./autogen.sh
-    sudo ./configure
-    sudo make
-    sudo make install
-
-    sudo -u postgres -i
-    psql -f /usr/local/share/osm2pgsql/900913.sql -d gis
-    exit
-
 Mapnik
 ------
 
-Mapnik is voor generatie van tiles. Kent geen Debian/Ubuntu packages, dus altijd van source bouwen. ::
+Mapnik is voor generatie van tiles. Via eigen repo installeren. Zelf compileren is verleden tijd! Zie ook 
+https://github.com/mapnik/mapnik/wiki/UbuntuInstallation en de packages: 
+https://launchpad.net/~mapnik/+archive/v2.1.0/+packages ::
 
-    sudo mkdir /opt/mapnik
-    cd /opt/mapnik
-    sudo git clone git://github.com/mapnik/mapnik
+      sudo add-apt-repository ppa:mapnik/v2.1.0
+      sudo apt-get update
+      sudo apt-get install libmapnik mapnik-utils python-mapnik
 
-    # Juiste branch uit GIT
-    cd mapnik
-    sudo git branch 2.1 origin/2.1.x
-    sudo git checkout 2.1
+Check installatie (libmapnik_2.1.0-ubuntu1~quantal2_amd64.deb). ::
+  
+      python
+      Python 2.7.3 (default, Sep 26 2012, 21:51:14) 
+      [GCC 4.7.2] on linux2
+      Type "help", "copyright", "credits" or "license" for more information.
+      >>> import mapnik
+      >>> 
 
-    sudo python scons/scons.py configure INPUT_PLUGINS=all OPTIMIZATION=3
-    SYSTEM_FONTS=/usr/share/fonts/truetype/
-    sudo python scons/scons.py
-    sudo python scons/scons.py install
-    sudo ldconfig
-
-- note mapnik 2.0 branch compiler error: change to 2.1.x
-- note: need libboost1.48-all-dev (1.46 was installed)
-- note if too little memory during compile     ::
-
-    https://bitcointalk.org/index.php?topic=110627.0
-    create 1GB swap and then compile
-    sudo dd if=/dev/zero of=/swapfile bs=64M count=16
-    sudo mkswap /swapfile
-    sudo swapon /swapfile
-
-    # daarna swapfile weghalen:
-    sudo swapoff /swapfile
-    sudo rm /swapfile
 
 mod_tile+renderd
 ----------------
