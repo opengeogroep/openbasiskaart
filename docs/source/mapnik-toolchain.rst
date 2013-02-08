@@ -23,7 +23,7 @@ Hieronder de stappen voor installatie van de verschillende tools.
 Ubuntu
 ------
 
-We gaan uit van Ubuntu 12.04. Deze moet altijd eerst uptodate gebracht worden. ::
+We gaan uit van Ubuntu 12.10 64bits. Deze moet altijd eerst uptodate gebracht worden. ::
 
 	sudo apt-get update
 	sudo apt-get upgrade
@@ -33,7 +33,7 @@ Repositories
 
 Ubuntu bevat vaak niet laatste versies benodigde packages. Door repositories aan
 "Apt" toe te voegen kan wel via standaard packages recente versies geinstalleerd worden.
-Allereerst evt tool om repo's toe te voegen. ::
+Allereerst evt tool om repo's toe te voegen (hoeft niet op Ubuntu 12.10). ::
 
 	# install the command add-apt-repository if the command can't be found.
 	sudo apt-get install software-properties-common
@@ -50,6 +50,12 @@ Altijd UbuntuGIS toevoegen https://wiki.ubuntu.com/UbuntuGIS ! ::
     sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 	sudo apt-get update
 
+Check of de repo's goed zijn toegevoegd. ::
+
+       ls /etc/apt/sources.list.d
+       # geeft
+       kakrueger-openstreetmap-quantal.list  kakrueger-openstreetmap-quantal.list.save  ubuntugis-ubuntugis-unstable-quantal.list
+
 Afhankelijkheden
 ----------------
 
@@ -58,31 +64,38 @@ Eerst afhankelijkheden installeren, vooral indien zelf compileren. ::
      sudo apt-get install subversion git-core tar unzip wget bzip2 build-essential autoconf libtool
      libxml2-dev libgeos-dev libpq-dev libbz2-dev proj munin-node munin
      libprotobuf-c0-dev protobuf-c-compiler libfreetype6-dev libpng12-dev
-     libtiff4-dev libicu-dev libboost1.48-all-dev libgdal-dev libcairo-dev
-     libcairomm-1.0-dev apache2 apache2-dev libagg-dev apt-show-versions
+     libtiff4-dev libicu-dev  libgdal-dev libcairo-dev
+     libcairomm-1.0-dev apache2 libagg-dev apt-show-versions
 
 
-Proj: 4.8.0-3
+Proj: 4.8.0-3~quantal1
 
-GDAL: 1.9.2-2
+GDAL: 1.9.2-2~quantal6
 
-Geos: 3.3.3-2
+Geos: 3.3.3-1.1
 
 Postgresql/PostGIS
 ------------------
-On Ubuntu there are pre-packaged versions of both postgis and postgresql, so
-these can simply be installed via the ubuntu package manager. ::
+Belangrijk is om package "postgis" te installeren. Dan komt alles mee. ::
 
-    sudo apt-get install postgresql-9.1-postgis postgresql-contrib postgresql-server-dev-9.1
+    sudo apt-get install postgis postgresql-contrib postgresql-server-dev-9.1
+
+Check of PostGIS v2 is installed. ::
+
+    apt-show-versions | grep postgis
+    # moet geven
+    postgis/quantal uptodate 2.0.1-2~quantal3
+    postgresql-9.1-postgis/quantal uptodate 2.0.1-2~quantal3
+
+Template database aanmaken. Nieuwe manier voor PostGIS 2.0 met EXTENSIONS (ipv PostGIS sql laden)
+zie http://postgis.net/docs/manual-2.0/postgis_installation.html#create_new_db_extensions
 
     sudo -u postgres -i
     createuser osm # answer yes for superuser (although this isn't strictly necessary)
-    createdb -E UTF8 -O osm gis
-
-    psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql -d gis
-    psql -d gis -c "ALTER TABLE geometry_columns OWNER TO osm; ALTER TABLE  spatial_ref_sys OWNER TO osm;"
-
+    createdb -E UTF8 -O osm postgis2_template
+    psql -d postgis2_template -c "CREATE EXTENSION postgis;"
     exit
+
 
 OSM2PGSQL
 ---------
@@ -93,7 +106,10 @@ Zie ook http://wiki.openstreetmap.org/wiki/Osm2pgsql ::
     # install the osm2pgsql package.
     sudo apt-get install osm2pgsql
 
-Of build van source. ::
+Installeert: osm2pgsql (0.81.0-1~quantal3). NB Dit is de juiste versie voor 64-bit ID ondersteuning.
+Zie http://web.archiveorange.com/archive/v/wQWIb2eq6T9IKbr4XkWx.
+
+Of build van source, niet echt nodig op Ubuntu 12.10 met PPA als boven. ::
 
     mkdir /opt/osm2pgsql
     sudo svn co http://svn.openstreetmap.org/applications/utils/export/osm2pgsql svn
