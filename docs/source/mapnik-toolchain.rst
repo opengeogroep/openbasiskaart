@@ -133,20 +133,188 @@ Check installatie (libmapnik_2.1.0-ubuntu1~quantal2_amd64.deb). ::
 mod_tile+renderd
 ----------------
 
-NB wordt dus MBTiles+MapProxy!!
-Install mod_tile and renderd (alles met sudo)
+Vanuit repo install. ::
 
-Compile the mod_tile source code (moet altijd eerst mapnik!). ::
+       sudo apt-get install  libapache2-mod-tile
 
-    sudo mkdir /opt/mod_tile
-    cd /opt/mod_tile
-    sudo svn co http://svn.openstreetmap.org/applications/utils/mod_tile svn
-    cd svn
-	sudo ./autogen.sh
-	sudo ./configure
-	sudo make
-	sudo make install
-	sudo make install-mod_tile
-	sudo ldconfig
+Download ook /usr/share/mapnik-osm-data/world_boundaries-spherical.tgz (50MB) en 
+/usr/share/mapnik-osm-data/processed_p.tar.bz2 (500MB) en
+/usr/share/mapnik-osm-data/shoreline_300.tar.bz2 (40MB). Output. ::
+
+	Reading package lists... Done
+	Building dependency tree       
+	Reading state information... Done
+	The following extra packages will be installed:
+	  libgeotiff2 libmapnik2-2.0 librasterlite1 openstreetmap-mapnik-stylesheet-data renderd
+	Suggested packages:
+	  geotiff-bin gdal-bin libgeotiff-epsg
+	The following NEW packages will be installed:
+	  libapache2-mod-tile libgeotiff2 libmapnik2-2.0 librasterlite1 openstreetmap-mapnik-stylesheet-data renderd
+	0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+	Need to get 2,232 kB of archives.
+	After this operation, 7,449 kB of additional disk space will be used.
+	Do you want to continue [Y/n]? Y
+	Get:1 http://archive.ubuntu.com/ubuntu/ quantal/universe libgeotiff2 amd64 1.3.0+dfsg-3 [70.3 kB]
+	Get:2 http://ppa.launchpad.net/kakrueger/openstreetmap/ubuntu/ quantal/main renderd amd64 0.4-15~quantal1 [74.9 kB]
+	Get:3 http://archive.ubuntu.com/ubuntu/ quantal/universe librasterlite1 amd64 1.1~svn11-2build1 [46.8 kB]
+	Get:4 http://ppa.launchpad.net/kakrueger/openstreetmap/ubuntu/ quantal/main libapache2-mod-tile amd64 0.4-15~quantal1 [38.0 kB]
+	Get:5 http://ppa.launchpad.net/kakrueger/openstreetmap/ubuntu/ quantal/main openstreetmap-mapnik-stylesheet-data all 0.2-r29214~quantal1 [202 kB]
+	Get:6 http://archive.ubuntu.com/ubuntu/ quantal/universe libmapnik2-2.0 amd64 2.0.0+ds1-3ubuntu1 [1,800 kB]
+	Fetched 2,232 kB in 1s (1,754 kB/s)       
+	Preconfiguring packages ...
+	Selecting previously unselected package libgeotiff2.
+	(Reading database ... 74003 files and directories currently installed.)
+	Unpacking libgeotiff2 (from .../libgeotiff2_1.3.0+dfsg-3_amd64.deb) ...
+	Selecting previously unselected package librasterlite1:amd64.
+	Unpacking librasterlite1:amd64 (from .../librasterlite1_1.1~svn11-2build1_amd64.deb) ...
+	Selecting previously unselected package libmapnik2-2.0.
+	Unpacking libmapnik2-2.0 (from .../libmapnik2-2.0_2.0.0+ds1-3ubuntu1_amd64.deb) ...
+	Selecting previously unselected package renderd.
+	Unpacking renderd (from .../renderd_0.4-15~quantal1_amd64.deb) ...
+	Selecting previously unselected package libapache2-mod-tile.
+	Unpacking libapache2-mod-tile (from .../libapache2-mod-tile_0.4-15~quantal1_amd64.deb) ...
+	Selecting previously unselected package openstreetmap-mapnik-stylesheet-data.
+	Unpacking openstreetmap-mapnik-stylesheet-data (from .../openstreetmap-mapnik-stylesheet-data_0.2-r29214~quantal1_all.deb) ...
+	Processing triggers for ureadahead ...
+	Setting up libgeotiff2 (1.3.0+dfsg-3) ...
+	Setting up librasterlite1:amd64 (1.1~svn11-2build1) ...
+	Setting up libmapnik2-2.0 (2.0.0+ds1-3ubuntu1) ...
+	Setting up renderd (0.4-15~quantal1) ...
+	 * Starting Mapnik rendering daemon renderd
+	   ...done.
+	Setting up openstreetmap-mapnik-stylesheet-data (0.2-r29214~quantal1) ...
+	--2013-02-08 22:46:10--  http://tile.openstreetmap.org/world_boundaries-spherical.tgz
+	Resolving tile.openstreetmap.org (tile.openstreetmap.org)... 193.63.75.98
+	Connecting to tile.openstreetmap.org (tile.openstreetmap.org)|193.63.75.98|:80... connected.
+	HTTP request sent, awaiting response... 200 OK
+	Length: 52857349 (50M) [application/x-gzip]
+	Saving to: `/usr/share/mapnik-osm-data/world_boundaries-spherical.tgz'
+	
+	100%[===============================================================================================================================================>] 52,857,349   689K/s   in 51s     
+	
+	2013-02-08 22:47:01 (1007 KB/s) - `/usr/share/mapnik-osm-data/world_boundaries-spherical.tgz' saved [52857349/52857349]
+	
+	--2013-02-08 22:47:01--  http://tile.openstreetmap.org/processed_p.tar.bz2
+	Resolving tile.openstreetmap.org (tile.openstreetmap.org)... 193.63.75.98
+	Connecting to tile.openstreetmap.org (tile.openstreetmap.org)|193.63.75.98|:80... connected.
+	HTTP request sent, awaiting response... 200 OK
+	Length: 409468857 (390M) [application/x-bzip2]
+	Saving to: `/usr/share/mapnik-osm-data/processed_p.tar.bz2'
+	100%[===============================================================================================================================================>] 409,468,857 1.65M/s   in 3m 22s  
+	
+	2013-02-08 22:50:24 (1.93 MB/s) - `/usr/share/mapnik-osm-data/processed_p.tar.bz2' saved [409468857/409468857]
+	
+	--2013-02-08 22:50:24--  http://tile.openstreetmap.org/shoreline_300.tar.bz2
+	Resolving tile.openstreetmap.org (tile.openstreetmap.org)... 193.63.75.98
+	Connecting to tile.openstreetmap.org (tile.openstreetmap.org)|193.63.75.98|:80... connected.
+	HTTP request sent, awaiting response... 200 OK
+	Length: 43867136 (42M) [application/x-bzip2]
+	Saving to: `/usr/share/mapnik-osm-data/shoreline_300.tar.bz2'
+	
+	100%[===============================================================================================================================================>] 43,867,136  1.12M/s   in 43s     
+	
+	2013-02-08 22:51:07 (997 KB/s) - `/usr/share/mapnik-osm-data/shoreline_300.tar.bz2' saved [43867136/43867136]
+	
+	--2013-02-08 22:51:07--  http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_populated_places.zip
+	Resolving www.naturalearthdata.com (www.naturalearthdata.com)... 66.147.242.194
+	Connecting to www.naturalearthdata.com (www.naturalearthdata.com)|66.147.242.194|:80... connected.
+	HTTP request sent, awaiting response... 302 Moved Temporarily
+	Location: http://www.nacis.org/naturalearth/10m/cultural/ne_10m_populated_places.zip [following]
+	--2013-02-08 22:51:08--  http://www.nacis.org/naturalearth/10m/cultural/ne_10m_populated_places.zip
+	Resolving www.nacis.org (www.nacis.org)... 146.201.97.163
+	Connecting to www.nacis.org (www.nacis.org)|146.201.97.163|:80... connected.
+	HTTP request sent, awaiting response... 200 OK
+	Length: 1578296 (1.5M) [application/x-zip-compressed]
+	Saving to: `/usr/share/mapnik-osm-data/ne_10m_populated_places.zip'
+	
+	100%[===============================================================================================================================================>] 1,578,296    449K/s   in 4.2s    
+	
+	2013-02-08 22:51:12 (367 KB/s) - `/usr/share/mapnik-osm-data/ne_10m_populated_places.zip' saved [1578296/1578296]
+	
+	--2013-02-08 22:51:12--  http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_boundary_lines_land.zip
+	Resolving www.naturalearthdata.com (www.naturalearthdata.com)... 66.147.242.194
+	Connecting to www.naturalearthdata.com (www.naturalearthdata.com)|66.147.242.194|:80... connected.
+	HTTP request sent, awaiting response... 302 Moved Temporarily
+	Location: http://www.nacis.org/naturalearth/110m/cultural/ne_110m_admin_0_boundary_lines_land.zip [following]
+	--2013-02-08 22:51:13--  http://www.nacis.org/naturalearth/110m/cultural/ne_110m_admin_0_boundary_lines_land.zip
+	Resolving www.nacis.org (www.nacis.org)... 146.201.97.163
+	Connecting to www.nacis.org (www.nacis.org)|146.201.97.163|:80... connected.
+	HTTP request sent, awaiting response... 200 OK
+	Length: 44731 (44K) [application/x-zip-compressed]
+	Saving to: `/usr/share/mapnik-osm-data/ne_110m_admin_0_boundary_lines_land.zip'
+	
+	100%[===============================================================================================================================================>] 44,731      55.3K/s   in 0.8s    
+	
+	2013-02-08 22:51:14 (55.3 KB/s) - `/usr/share/mapnik-osm-data/ne_110m_admin_0_boundary_lines_land.zip' saved [44731/44731]
+	
+	world_boundaries/
+	world_boundaries/places.shx
+	world_boundaries/world_boundaries_m.index
+	world_boundaries/world_bnd_m.shx
+	world_boundaries/builtup_area.shx
+	world_boundaries/world_bnd_m.dbf
+	world_boundaries/builtup_area.prj
+	world_boundaries/places.shp
+	world_boundaries/world_boundaries_m.shx
+	world_boundaries/world_boundaries_m.shp
+	world_boundaries/places.dbf
+	world_boundaries/places.prj
+	world_boundaries/builtup_area.dbf
+	world_boundaries/world_bnd_m.shp
+	world_boundaries/world_bnd_m.prj
+	world_boundaries/world_boundaries_m.dbf
+	world_boundaries/builtup_area.shp
+	world_boundaries/world_boundaries_m.prj
+	world_boundaries/world_bnd_m.index
+	world_boundaries/builtup_area.index
+	processed_p.dbf
+	processed_p.index
+	processed_p.shp
+	processed_p.shx
+	shoreline_300.dbf
+	shoreline_300.index
+	shoreline_300.shp
+	shoreline_300.shx
+	Archive:  /usr/share/mapnik-osm-data/ne_10m_populated_places.zip
+	  inflating: /usr/share/mapnik-osm-data/world_boundaries/ne_10m_populated_places.README.html  
+	 extracting: /usr/share/mapnik-osm-data/world_boundaries/ne_10m_populated_places.VERSION.txt  
+	  inflating: /usr/share/mapnik-osm-data/world_boundaries/ne_10m_populated_places.dbf  
+	  inflating: /usr/share/mapnik-osm-data/world_boundaries/ne_10m_populated_places.prj  
+	  inflating: /usr/share/mapnik-osm-data/world_boundaries/ne_10m_populated_places.shp  
+	  inflating: /usr/share/mapnik-osm-data/world_boundaries/ne_10m_populated_places.shx  
+	Archive:  /usr/share/mapnik-osm-data/ne_110m_admin_0_boundary_lines_land.zip
+	  inflating: /usr/share/mapnik-osm-data/world_boundaries/ne_110m_admin_0_boundary_lines_land.README.html  
+	 extracting: /usr/share/mapnik-osm-data/world_boundaries/ne_110m_admin_0_boundary_lines_land.VERSION.txt  
+	  inflating: /usr/share/mapnik-osm-data/world_boundaries/ne_110m_admin_0_boundary_lines_land.dbf  
+	  inflating: /usr/share/mapnik-osm-data/world_boundaries/ne_110m_admin_0_boundary_lines_land.prj  
+	  inflating: /usr/share/mapnik-osm-data/world_boundaries/ne_110m_admin_0_boundary_lines_land.shp  
+	  inflating: /usr/share/mapnik-osm-data/world_boundaries/ne_110m_admin_0_boundary_lines_land.shx  
+	Processing triggers for ureadahead ...
+	Setting up libapache2-mod-tile (0.4-15~quantal1) ...
+	Enabling module tile.
+	To activate the new configuration, you need to run:
+	  service apache2 restart
+	Enabling site tileserver_site.
+	To activate the new configuration, you need to run:
+	  service apache2 reload
+	Site default disabled.
+	To activate the new configuration, you need to run:
+	  service apache2 reload
+	 * Restarting web server apache2
+	[Fri Feb 08 22:52:40 2013] [notice] Committing tile config default
+	[Fri Feb 08 22:52:40 2013] [notice] Loading tile config default at /osm/ for zooms 0 - 18 from tile directory /var/lib/mod_tile with extension .png and mime type image/png
+	apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1 for ServerName
+	 ... waiting [Fri Feb 08 22:52:41 2013] [notice] Committing tile config default
+	[Fri Feb 08 22:52:41 2013] [notice] Loading tile config default at /osm/ for zooms 0 - 18 from tile directory /var/lib/mod_tile with extension .png and mime type image/png
+	apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1 for ServerName
+	   ...done.
+	Processing triggers for libc-bin ...
+	ldconfig deferred processing now taking place
+
+
+Toch even checken want hier wordt ook Mapnik installed! Bovenstaande installeert/activeert mod_tile en renderd.
+
+NB bovenstaande wordt dus MBTiles+MapProxy!!
+
 
 
