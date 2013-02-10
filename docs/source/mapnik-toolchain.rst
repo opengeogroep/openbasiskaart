@@ -95,7 +95,7 @@ zie http://postgis.net/docs/manual-2.0/postgis_installation.html#create_new_db_e
     psql -d postgis2_template -c "CREATE EXTENSION postgis;"
     createdb -E UTF8 -O osm gis -T postgis2_template
 
-    # legacy.sql compat layer om problemen met Mapnik 2.0 (niet bestaande functies op te lossen)
+	# legacy.sql compat layer om problemen met Mapnik 2.0 (niet bestaande functies op te lossen)
 	psql -d gis -f /usr/share/postgresql/9.1/contrib/postgis-2.0/legacy.sql
 
 Inloggen enablen. ::
@@ -165,7 +165,7 @@ Dit download ook automatisch ``/usr/share/mapnik-osm-data/world_boundaries-spher
 
 Notes:
 
-* Output van apt-get bewaard, zie `<static/output-apt-get-mod-tile.txt>`_
+* Output van apt-get bewaard, zie `<_static/output-apt-get-mod-tile.txt>`_
 * Toch even checken want hier wordt ook Mapnik (2.0) installed, terwijl we 2.1 hadden via apt-get !
 
 NB bovenstaande wordt dus MBTiles+MapProxy!!
