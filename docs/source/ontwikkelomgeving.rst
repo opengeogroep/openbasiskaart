@@ -4,9 +4,10 @@
 Ontwikkelomgeving
 *****************
 
-Voor het ontwikkelen en testen van toolchains is het handig om dit je eigen systeem te doen.
-Echter, je wilt niet je systeem "vervuilen" met allerlei installaties. Ook is het lastig om
-een werkende toolchain over te dragen aan de werkelijke test/prodcutie server.
+Voor het ontwikkelen en testen van toolchains is het handig om dit op je eigen systeem te doen.
+Echter, je wilt niet je systeem "vervuilen" met allerlei installaties. Ook is het dan lastig om
+een werkende toolchain over te dragen aan de werkelijke test/produktie server, bijv als je op Mac OSX of Windows werkt of
+een oudere Ubuntu.
 
 Daarom wordt steeds meer met **virtualisatie** gewerkt, ook op lokale systemen als bijv Mac OSX.
 Ik beschrijf hieronder mijn werkwijze om op Mac OSX met Ubuntu 12.10 te ontwikkelen en testen.
@@ -20,7 +21,7 @@ Dit blijkt een gouden combinatie te zijn, ook als je niet met Puppet of Chef wer
 gebruik van Puppet of Chef hoeft dus niet in eerste instantie.
 
 Hoewel VirtualBox natuurlijk op zichzelf is te gebruiken, voegt Vagrant juist extra handigheden toe,
-met name om lokaal gemakkelijk met je box te werken, bijv.
+met name om lokaal gemakkelijk met je VMs, "boxes" geheten in Vagrant, te werken, bijv.
 
 * snel VMs downloaden, in de lucht krijgen
 * gemakkelijk port forwarden, m.n. voor SSH en je browser
@@ -36,13 +37,14 @@ Zie http://docs.vagrantup.com/v1/docs/getting-started/index.html
 VirtualBox
 ----------
 
-Laatste versie (in feb 2013: v4.2.6) downloaden en installeren.
+Laatste versie (in feb 2013: v4.2.6) downloaden en installeren. Zie
+https://www.virtualbox.org/wiki/Downloads. Ook de extension packs installeren.
 
 Vagrant
 -------
 
 Voor Mac OSX http://downloads.vagrantup.com/tags/v1.0.6. Maar kan op Lunix OS-es simpeler, of via RubyGems,
-``gem install vagrant``. 1.0.6 installed.
+``gem install vagrant`` (Vagrant is in Ruby ontwikkeld). Feb 2013: 1.0.6 installed.
 
 Werken met Vagrant Boxes
 ========================
@@ -128,6 +130,11 @@ Notes:
 * als je bent ingelogd via ``vagrant ssh`` kun je via ``sudo su -`` root worden
 * in settings binnen VB: zet op 64-bits en NW Adapter1 via en0
 * set networking in VB to NAT to enable 2222->22 SSH forwarding
+
+.. figure:: _static/virtualbox-vagrant.jpg
+   :align: center
+
+   *Figuur ONT-1 - VirtualBox Screenshot*
 
 Werken met je Box
 -----------------
