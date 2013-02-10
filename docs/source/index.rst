@@ -14,6 +14,7 @@ Contents:
    algemeen.rst
    mapnik-toolchain.rst
    mapcache-toolchain.rst
+   ontwikkelomgeving.rst
    links.rst
 
 Indices and tables

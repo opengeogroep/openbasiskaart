@@ -273,6 +273,7 @@ Verder loggen/volgen:
 * PostgreSQL debug output zetten: ``/etc/postgresql/9.1/main/postgresql.conf``, zet ``client_min_messages = log``
 * volgen renderd logfile: ``tail -f /var/log/syslog |grep renderd &``
 * volgen postgresql log: ``tail -f /var/log/postgresql/postgresql-9.1-main.log &``
+* losse tile: http://localhost:8090/osm/17/67318/43072.png
 
 Demo
 ====
