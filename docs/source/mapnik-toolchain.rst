@@ -59,7 +59,7 @@ Check of de repo's goed zijn toegevoegd. ::
 Afhankelijkheden
 ----------------
 
-Eerst afhankelijkheden installeren, vooral indien zelf compileren. ::
+Eerst afhankelijkheden installeren, vooral indien zelf compileren (deze lijst is obsolete). ::
 
      sudo apt-get install subversion git-core tar unzip wget bzip2 build-essential autoconf libtool
      libxml2-dev libgeos-dev libpq-dev libbz2-dev proj munin-node munin
@@ -98,6 +98,9 @@ zie http://postgis.net/docs/manual-2.0/postgis_installation.html#create_new_db_e
     createdb -E UTF8 -O osm postgis2_template
     psql -d postgis2_template -c "CREATE EXTENSION postgis;"
     createdb -E UTF8 -O osm gis -T postgis2_template
+
+    # legacy.sql compat layer om problemen met Mapnik 2.0 (niet bestaande functies op te lossen)
+	psql -d gis -f /usr/share/postgresql/9.1/contrib/postgis-2.0/legacy.sql
 
 Inloggen enablen. ::
 
@@ -381,10 +384,49 @@ Configureren Renderd/Mapnik/mod_tile. ::
 	# zet user/password naar osm/osm in
 	e inc/datasource-settings.xml.inc
 
+	<Parameter name="type">postgis</Parameter>
+	<Parameter name="password">osm</Parameter>
+	<Parameter name="host">localhost</Parameter>
+	<Parameter name="user">osm</Parameter>
+	<Parameter name="dbname">gis</Parameter>
+	<!-- this should be 'false' if you are manually providing the 'extent' -->
+	<Parameter name="estimate_extent">false</Parameter>
+	<!-- manually provided extent in epsg 900913 for whole globe -->
+	<!-- providing this speeds up Mapnik database queries -->
+	<!-- <Parameter name="extent">4.88,52.36,4.90,52.38</Parameter> -->
+	<Parameter name="extent">543239.115,6865481.657,545465.505,6869128.129</Parameter>
+
 	# herstarten en log volgen renderd
 	tail -f /var/log/syslog |grep renderd &
 	/etc/init.d/renderd restart
 
+Notes:
+
+* Mapnik 2.0 met PosGIS 2.0: legacy.sql laden in PostGIS DB
+    - ``psql -d gis -f /usr/share/postgresql/9.1/contrib/postgis-2.0/legacy.sql``
+* extent
+	- moet in EPSG:900913
+	- extent gezet op klein stukje A'dam C voor testen
+* tiles verwijderen/opschonen
+    - ``rm -rf /var/lib/mod_tile/default``
+    - ``touch /var/lib/mod_tile/planet-import-complete``
+* herstarten renderd: ``/etc/init.d/renderd restart``
+* PostgreSQL debug output zetten: ``/etc/postgresql/9.1/main/postgresql.conf``, zet ``client_min_messages = log``
+* volgen renderd logfile: ``tail -f /var/log/syslog |grep renderd &``
+* volgen postgresql log: ``tail -f /var/log/postgresql/postgresql-9.1-main.log &``
+
+Demo
+====
+
+Een demo app staat onder ``/var/www/osm/slippymap.html``. Hier HTML aanpassen om centrum op Amsterdam te zetten.
+Evt port zetten indien port forwarding naar local VM (8090 bijv). Dan zetten. ::
+
+	var newLayer = new OpenLayers.Layer.OSM("Local Tiles", "http://localhost:8090/osm/${z}/${x}/${y}.png", {numZoomLevels: 19});
+
+.. figure:: _static/renderd-working2.jpg
+   :align: center
+
+   *Figuur MT-2 - Amsterdam-C Extent met renderd+PostgreSQL logging*
 
 
 

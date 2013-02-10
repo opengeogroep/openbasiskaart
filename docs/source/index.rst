@@ -9,7 +9,7 @@ Documentatie OpenBasiskaart
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    algemeen.rst
    mapnik-toolchain.rst
