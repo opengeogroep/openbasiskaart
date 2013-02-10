@@ -15,6 +15,15 @@ Normaal gesproken wordt "mod-tile" met ``renderd`` als tileserver/generator gebr
 Echter dan zijn we beperkt tot TMS.
 Als variant op de toolchain proberen we ``MapProxy`` via ``MBTiles`` opslag.
 
+We gaan in de volgende stappen te werk:
+
+1. standaard installatie PostGIS/Mapnik/renderd/mod_tile met tiles in EPSG:900913
+2. idem maar met tiles in EPSG:28992
+3. vervang renderd/mod_tile door MapProxy+MBTiles
+4. onderzoek: meerdere styles (via TileMill)
+5. onderzoek: automatisch updaten
+6. heel NL tilen
+
 Installaties
 ============
 
@@ -127,7 +136,7 @@ Zie ook http://wiki.openstreetmap.org/wiki/Osm2pgsql ::
     # install the osm2pgsql package.
     sudo apt-get install osm2pgsql
 
-Installeert: osm2pgsql (0.81.0-1~quantal3). NB Dit is de juiste versie voor 64-bit ID ondersteuning.
+Installeert: ``osm2pgsql (0.81.0-1~quantal3)``. NB Dit is de juiste versie voor 64-bit ID ondersteuning.
 Zie http://web.archiveorange.com/archive/v/wQWIb2eq6T9IKbr4XkWx.
 
 Mapnik
