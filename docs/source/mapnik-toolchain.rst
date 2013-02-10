@@ -249,6 +249,27 @@ Notes:
     - ``rm -rf /var/lib/mod_tile/default``
     - ``touch /var/lib/mod_tile/planet-import-complete``
 * herstarten renderd: ``/etc/init.d/renderd restart``
+
+Monitoring
+==========
+
+Munin is een flexibele monitoring tool, zie: http://munin-monitoring.org.
+
+Installeren. ::
+
+     sudo apt-get install munin-node munin
+
+Enablen voor andere hosts via ``/etc/apache2/conf.d/munin``.
+
+Via browser raadplegen, zie:
+
+.. figure:: _static/munin-mod-tile.jpg
+   :align: center
+
+   *Figuur MT-2 - Munin in actie*
+
+Verder loggen/volgen:
+
 * PostgreSQL debug output zetten: ``/etc/postgresql/9.1/main/postgresql.conf``, zet ``client_min_messages = log``
 * volgen renderd logfile: ``tail -f /var/log/syslog |grep renderd &``
 * volgen postgresql log: ``tail -f /var/log/postgresql/postgresql-9.1-main.log &``
@@ -267,7 +288,7 @@ Het resultaat met wat logging info hieronder.
 .. figure:: _static/renderd-working2.jpg
    :align: center
 
-   *Figuur MT-2 - Amsterdam-C Extent met renderd+PostgreSQL logging*
+   *Figuur MT-3 - Amsterdam-C Extent met renderd+PostgreSQL logging*
 
 
 
