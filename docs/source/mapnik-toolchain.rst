@@ -11,9 +11,9 @@ tiles beschikbaar op http://openstreetmap.org, a.k.a. "The Slippy Map".
 Om in RD-stelsel te werken moet nog iets speciaals gedaan worden.
 Zie ook: http://justobjects.org/blog/2010/openstreetmap-tiles-for-dutch-projection-epsg28992 ;-)
 
-Normaal gesproken wordt "mod-tile" met renderd als tileserver/generator gebruikt.
+Normaal gesproken wordt "mod-tile" met ``renderd`` als tileserver/generator gebruikt.
 Echter dan zijn we beperkt tot TMS.
-Als variant op de toolchain proberen we MapProxy via MBTiles.
+Als variant op de toolchain proberen we ``MapProxy` via ``MBTiles`` opslag.
 
 Installaties
 ============
@@ -421,7 +421,10 @@ Demo
 Een demo app staat onder ``/var/www/osm/slippymap.html``. Hier HTML aanpassen om centrum op Amsterdam te zetten.
 Evt port zetten indien port forwarding naar local VM (8090 bijv). Dan zetten. ::
 
-	var newLayer = new OpenLayers.Layer.OSM("Local Tiles", "http://localhost:8090/osm/${z}/${x}/${y}.png", {numZoomLevels: 19});
+	var newLayer = new OpenLayers.Layer.OSM("Local Tiles",
+	          "http://localhost:8090/osm/${z}/${x}/${y}.png", {numZoomLevels: 19});
+
+Het resultaat met wat logging info hieronder.
 
 .. figure:: _static/renderd-working2.jpg
    :align: center
