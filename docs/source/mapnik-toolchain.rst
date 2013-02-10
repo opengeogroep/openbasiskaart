@@ -23,7 +23,7 @@ Hieronder de stappen voor installatie van de verschillende tools.
 Ubuntu
 ------
 
-We gaan uit van Ubuntu 12.10 64bits. Deze moet altijd eerst uptodate gebracht worden. ::
+We gaan uit van Ubuntu 12.10 64-bits. Deze moet altijd eerst uptodate gebracht worden. ::
 
 	sudo apt-get update
 	sudo apt-get upgrade
@@ -91,10 +91,32 @@ Template database aanmaken. Nieuwe manier voor PostGIS 2.0 met EXTENSIONS (ipv P
 zie http://postgis.net/docs/manual-2.0/postgis_installation.html#create_new_db_extensions
 
     sudo -u postgres -i
-    createuser osm # answer yes for superuser (although this isn't strictly necessary)
+    # aanmaken user "osm" met zelfde password.
+    # answer yes for superuser (although this isn't strictly necessary)
+    createuser osm
+    psql -c "ALTER USER osm WITH PASSWORD 'osm';"
     createdb -E UTF8 -O osm postgis2_template
     psql -d postgis2_template -c "CREATE EXTENSION postgis;"
-    exit
+    createdb -E UTF8 -O osm gis -T postgis2_template
+
+Inloggen enablen. ::
+
+		# Edit the file /etc/postgresql/9.1/main/pg_hba.conf and replace ident by either md5 or trust,
+		# depending on whether you want it to ask for a password on your own computer or not.
+		# Then reload the configuration file with:
+
+		/etc/init.d/postgresql reload
+
+
+Handig is phppgadmin. Zie ook http://sql-info.de/postgresql/notes/installing-phppgadmin.html ::
+
+	 sudo apt-get install phppgadmin
+
+	 # Toelaten inloggen
+     sudo emacs /usr/share/phppgadmin/conf/config.inc.php
+     $conf['extra_login_security'] = false;
+
+	 # dan via localhost /phppgadmin benaderen
 
 
 OSM2PGSQL
@@ -315,6 +337,58 @@ Download ook /usr/share/mapnik-osm-data/world_boundaries-spherical.tgz (50MB) en
 Toch even checken want hier wordt ook Mapnik installed! Bovenstaande installeert/activeert mod_tile en renderd.
 
 NB bovenstaande wordt dus MBTiles+MapProxy!!
+
+Data
+====
+
+Het laden van de data. Gebied Amsterdam. Zie http://metro.teczno.com/#amsterdam
+
+.. figure:: _static/amsterdam-osm-extent.jpg
+   :align: center
+
+   *Figuur MT-1 - Amsterdam Extent (bron: http://metro.teczno.com/#amsterdam)*
+
+Data ophalen. ::
+
+	mkdir /opt/openbasiskaart/data
+
+	# PBF download (53 MB)
+	wget http://osm-metro-extracts.s3.amazonaws.com/amsterdam.osm.pbf
+
+	# Coastline A'dam area download (53 MB)
+	wget http://osm-metro-extracts.s3.amazonaws.com/amsterdam.coastline.zip
+
+Data laden in PostgreSQL.  ::
+
+	cd /opt/openbasiskaart/data
+
+	# Op locale VirtualBox VM met weinig geheugen
+	# met "--cache-strategy sparse"
+	osm2pgsql -W -U osm -d gis --slim --cache-strategy sparse  amsterdam.osm.pbf
+
+	# duurt plm 900 sec op VM
+
+Services
+========
+
+Configureren Renderd/Mapnik/mod_tile. ::
+
+	# Maak kopie default mapnik config
+	mkdir /opt/openbasiskaart/mapnik
+	cp -r  /etc/mapnik-osm-data /opt/openbasiskaart/mapnik/default
+	cd /opt/openbasiskaart/mapnik/default
+
+	# zet user/password naar osm/osm in
+	e inc/datasource-settings.xml.inc
+
+	# herstarten en log volgen renderd
+	tail -f /var/log/syslog |grep renderd &
+	/etc/init.d/renderd restart
+
+
+
+
+
 
 
 
