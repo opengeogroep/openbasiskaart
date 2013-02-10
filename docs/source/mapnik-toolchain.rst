@@ -59,13 +59,9 @@ Check of de repo's goed zijn toegevoegd. ::
 Afhankelijkheden
 ----------------
 
-Eerst afhankelijkheden installeren, vooral indien zelf compileren (deze lijst is obsolete). ::
+Eerst afhankelijkheden installeren. ::
 
-     sudo apt-get install subversion git-core tar unzip wget bzip2 build-essential autoconf libtool
-     libxml2-dev libgeos-dev libpq-dev libbz2-dev proj munin-node munin
-     libprotobuf-c0-dev protobuf-c-compiler libfreetype6-dev libpng12-dev
-     libtiff4-dev libicu-dev  libgdal-dev libcairo-dev
-     libcairomm-1.0-dev apache2 libagg-dev apt-show-versions
+     sudo apt-get install libgdal-dev apache2 apt-show-versions
 
 
 Proj: 4.8.0-3~quantal1
@@ -76,7 +72,7 @@ Geos: 3.3.3-1.1
 
 Postgresql/PostGIS
 ------------------
-Belangrijk is om package "postgis" te installeren. Dan komt alles, bijv. Postgres 9.1, mee. ::
+Belangrijk is om package "postgis" te installeren. Dan komt alles "mee", bijv. Postgres 9.1 etc. ::
 
     sudo apt-get install postgis postgresql-contrib postgresql-server-dev-9.1
 
@@ -88,7 +84,7 @@ Check of PostGIS v2 is installed. ::
     postgresql-9.1-postgis/quantal uptodate 2.0.1-2~quantal3
 
 Template database aanmaken. Nieuwe manier voor PostGIS 2.0 met EXTENSIONS (ipv PostGIS sql laden)
-zie http://postgis.net/docs/manual-2.0/postgis_installation.html#create_new_db_extensions
+zie http://postgis.net/docs/manual-2.0/postgis_installation.html#create_new_db_extensions ::
 
     sudo -u postgres -i
     # aanmaken user "osm" met zelfde password.
@@ -113,13 +109,13 @@ Inloggen enablen. ::
 
 Handig is phppgadmin. Zie ook http://sql-info.de/postgresql/notes/installing-phppgadmin.html ::
 
-	 sudo apt-get install phppgadmin
+	sudo apt-get install phppgadmin
 
-	 # Toelaten inloggen
-     sudo emacs /usr/share/phppgadmin/conf/config.inc.php
-     $conf['extra_login_security'] = false;
+	# Toelaten inloggen
+	sudo emacs /usr/share/phppgadmin/conf/config.inc.php
+	$conf['extra_login_security'] = false;
 
-	 # dan via localhost /phppgadmin benaderen
+	# dan via localhost /phppgadmin benaderen
 
 
 OSM2PGSQL
@@ -137,7 +133,7 @@ Zie http://web.archiveorange.com/archive/v/wQWIb2eq6T9IKbr4XkWx.
 Mapnik
 ------
 
-Mapnik is voor generatie van tiles. Via eigen repo installeren. Zelf compileren is verleden tijd! Zie ook 
+Mapnik is voor generatie van tiles. Via eigen repo te installeren. Zelf compileren is verleden tijd! Zie ook
 https://github.com/mapnik/mapnik/wiki/UbuntuInstallation en de packages: 
 https://launchpad.net/~mapnik/+archive/v2.1.0/+packages ::
 
@@ -145,14 +141,15 @@ https://launchpad.net/~mapnik/+archive/v2.1.0/+packages ::
       sudo apt-get update
       sudo apt-get install libmapnik mapnik-utils python-mapnik
 
-Check installatie (libmapnik_2.1.0-ubuntu1~quantal2_amd64.deb). ::
-  
-      python
-      Python 2.7.3 (default, Sep 26 2012, 21:51:14) 
-      [GCC 4.7.2] on linux2
-      Type "help", "copyright", "credits" or "license" for more information.
-      >>> import mapnik
-      >>> 
+
+Check installatie (``libmapnik_2.1.0-ubuntu1~quantal2_amd64.deb``) ::
+
+	python
+	Python 2.7.3 (default, Sep 26 2012, 21:51:14)
+	[GCC 4.7.2] on linux2
+	Type "help", "copyright", "credits" or "license" for more information.
+	>>> import mapnik
+	>>>
 
 
 mod_tile+renderd
