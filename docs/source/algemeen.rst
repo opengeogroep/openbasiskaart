@@ -24,15 +24,15 @@ de Nederlandse (RD-)projectie beschikbaar te maken.
 Specificaties
 =============
 
-Services: zowel TMS als WMTS, evt WMS-C. WMS heeft niet primair de focus, wel wordt deze in de derde variant geboden.
+Services: zowel TMS als WMTS, evt WMS-C. WMS heeft niet primair de focus, wel wordt deze in de eerste en derde variant geboden.
 
 Actualiteit: incrementele updates vanuit main OSM DB
 
 Visualisaties: meerdere, gemmakkelijk uitbreidbaar
 
-URL: http://basiskaart.opengeogroep.nl
+URL: http://openbasiskaart.nl
 
-Projecties: Voor de eerste twee varianten alleen RD, voor de derde variant wordt gewerkt aan ondersteuning van de 
+Projekties: Voor de eerste twee varianten alleen RD, voor de derde variant wordt gewerkt aan ondersteuning van de
 de service standaarden voor WMS zoals genoemd op http://www.geonovum.nl/geostandaarden/services/destandaarden
 
 Kaartlagen: voorlopig OSM, later eventueel ook Top10NL en waar mogelijk versterkt met de basisregistraties zoals BAG en BRT
@@ -41,11 +41,11 @@ Drie Toolchains
 ===============
 
 Er zijn meerdere mogelijkheden om vanuit een OSM Planet file uiteindelijk tot tiling en/of OGC webdiensten te komen.
-We hebben twee hoofdvarianten uitgezocht, bijgenaamd de "Mapcache Toolchain" en de "Mapnik Toolchain". Daarnaast is 
-er momenteel een derde variant in ontwikkeling; de "GeoServer Toolchain"
+We hebben drie hoofdvarianten uitgezocht, bijgenaamd de "Mapcache Toolchain",  "Mapnik Toolchain" en "GeoServer Toolchain".
 
 In de eerste twee gevallen zal tiling via TMS en WMTS geleverd dienen te worden. In het derde geval zal tiling beschikbaar 
-worden gemaakt via WMS-C, TMS en WMTS en zal ook WMS en KML beschikbaar komen
+worden gemaakt via WMS-C, TMS en WMTS en zal ook WMS en KML beschikbaar komen. Via MapProxy (1e variant) is ook WMS beschikbaar, zij het
+met de tilecache als bron.
 
 Ook willen we onderzoeken in hoeverre we in de eerste twee varianten MBTiles als opslag kunnen gebruiken.
 
