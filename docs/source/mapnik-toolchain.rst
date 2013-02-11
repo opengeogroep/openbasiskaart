@@ -53,17 +53,26 @@ Dan Kai Krueger's repo (https://launchpad.net/~kakrueger/+archive/openstreetmap 
 	sudo add-apt-repository ppa:kakrueger/openstreetmap
 	sudo apt-get update
 
+Mapnik repo t.b.v. Mapnik 2.1. Zie https://launchpad.net/~mapnik/+archive/v2.1.0/+packages. ::
+
+	sudo add-apt-repository ppa:mapnik/v2.1.0
+	sudo apt-get update
+
 Altijd UbuntuGIS toevoegen https://wiki.ubuntu.com/UbuntuGIS ! ::
 
 	# to add the UbuntuGIS PPA and update your packaging system.
-        sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+	sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 	sudo apt-get update
 
-Check of de repo's goed zijn toegevoegd. ::
+Check of de repo's goed zijn toegevoegd ::
 
-       ls /etc/apt/sources.list.d
-       # geeft
-       kakrueger-openstreetmap-quantal.list  kakrueger-openstreetmap-quantal.list.save  ubuntugis-ubuntugis-unstable-quantal.list
+	ls /etc/apt/sources.list.d
+	# geeft
+	kakrueger-openstreetmap-quantal.list
+	kakrueger-openstreetmap-quantal.list.save
+	mapnik-v2_1_0-quantal.list
+	ubuntugis-ubuntugis-unstable-quantal.list
+	ubuntugis-ubuntugis-unstable-quantal.list.save
 
 Afhankelijkheden
 ----------------
@@ -73,11 +82,11 @@ Eerst afhankelijkheden installeren. ::
      sudo apt-get install libgdal-dev apache2 apt-show-versions
 
 
-Proj: 4.8.0-3~quantal1
+Versies support libs:
 
-GDAL: 1.9.2-2~quantal6
-
-Geos: 3.3.3-1.1
+- Proj: 4.8.0-3~quantal1
+- GDAL: 1.9.2-2~quantal6
+- Geos: 3.3.3-1.1
 
 Postgresql/PostGIS
 ------------------
@@ -144,12 +153,9 @@ Mapnik
 
 Mapnik is voor generatie van tiles. Via eigen repo te installeren. Zelf compileren is verleden tijd! Zie ook
 https://github.com/mapnik/mapnik/wiki/UbuntuInstallation en de packages: 
-https://launchpad.net/~mapnik/+archive/v2.1.0/+packages ::
+https://launchpad.net/~mapnik/+archive/v2.1.0/+packages (zie boven) ::
 
-      sudo add-apt-repository ppa:mapnik/v2.1.0
-      sudo apt-get update
       sudo apt-get install libmapnik mapnik-utils python-mapnik
-
 
 Check installatie (``libmapnik_2.1.0-ubuntu1~quantal2_amd64.deb``) ::
 
@@ -159,7 +165,6 @@ Check installatie (``libmapnik_2.1.0-ubuntu1~quantal2_amd64.deb``) ::
 	Type "help", "copyright", "credits" or "license" for more information.
 	>>> import mapnik
 	>>>
-
 
 mod_tile+renderd
 ----------------
@@ -196,8 +201,8 @@ Data ophalen. ::
 	# PBF download (53 MB)
 	wget http://osm-metro-extracts.s3.amazonaws.com/amsterdam.osm.pbf
 
-	# Coastline A'dam area download (53 MB)
-	wget http://osm-metro-extracts.s3.amazonaws.com/amsterdam.coastline.zip
+	# Coastline A'dam area download (is leeg, dus niet gebruiken!!)
+	# wget http://osm-metro-extracts.s3.amazonaws.com/amsterdam.coastline.zip
 
 Data laden in PostgreSQL.  ::
 
@@ -211,6 +216,34 @@ Data laden in PostgreSQL.  ::
 
 Services
 ========
+
+Mapnik en mod_tile/renderd met eigen configuratie.
+
+De config van ``renderd`` in /etc/renderd.conf, is voorlopig Mapnik 2.0, maar mogelijk later proberen met Mapnik 2.1 ::
+
+	[renderd]
+	stats_file=/var/run/renderd/renderd.stats
+	socketname=/var/run/renderd/renderd.sock
+	num_threads=4
+	tile_dir=/var/lib/mod_tile
+
+	[mapnik]
+	plugins_dir=/usr/lib/mapnik/2.0/input
+	font_dir=/usr/share/fonts/truetype/ttf-dejavu
+	font_dir_recurse=false
+
+	[default]
+	URI=/osm/
+	; EIGEN MAPNIK CONF
+	XML=/opt/openbasiskaart/mapnik/default/osm.xml
+	DESCRIPTION=This is the standard osm mapnik style
+	;ATTRIBUTION=&copy;<a href=\"http://www.openstreetmap.org/\">OpenStreetMap</a> and <a href=\"http://wiki.openstreetmap.org/w\
+	iki/Contributors\">contributors</a>, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>
+	;HOST=tile.openstreetmap.org
+	;SERVER_ALIAS=http://a.tile.openstreetmap.org
+	;SERVER_ALIAS=http://b.tile.openstreetmap.org
+	;HTCPHOST=proxy.openstreetmap.org
+
 
 Configureren Renderd/Mapnik/mod_tile. ::
 
