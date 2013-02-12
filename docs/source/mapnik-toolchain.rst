@@ -111,10 +111,12 @@ zie http://postgis.net/docs/manual-2.0/postgis_installation.html#create_new_db_e
     psql -c "ALTER USER osm WITH PASSWORD 'osm';"
     createdb -E UTF8 -O osm postgis2_template
     psql -d postgis2_template -c "CREATE EXTENSION postgis;"
-    createdb -E UTF8 -O osm gis -T postgis2_template
 
 	# legacy.sql compat layer om problemen met Mapnik 2.0 (niet bestaande functies op te lossen)
-	psql -d gis -f /usr/share/postgresql/9.1/contrib/postgis-2.0/legacy.sql
+    psql -d postgis2_template -f /usr/share/postgresql/9.1/contrib/postgis-2.0/legacy.sql
+
+    # Aanmaken DB met PostGIS template
+    createdb -E UTF8 -O osm gis -T postgis2_template
 
 Inloggen enablen. ::
 
@@ -234,7 +236,6 @@ De config van ``renderd`` in /etc/renderd.conf, is voorlopig Mapnik 2.0, maar mo
 
 	[default]
 	URI=/osm/
-	; EIGEN MAPNIK CONF
 	XML=/opt/openbasiskaart/mapnik/default/osm.xml
 	DESCRIPTION=This is the standard osm mapnik style
 	;ATTRIBUTION=&copy;<a href=\"http://www.openstreetmap.org/\">OpenStreetMap</a> and <a href=\"http://wiki.openstreetmap.org/w\
@@ -323,6 +324,55 @@ Het resultaat met wat logging info hieronder.
    :align: center
 
    *Figuur MT-3 - Amsterdam-C Extent met renderd+PostgreSQL logging*
+
+Tiles in EPSG:28992
+===================
+
+Dit betreft Stap 2. Totnutoe is een standaard Mapnik/mod_tile toolchain opgezet. We moeten een aantal zaken wijzigen
+om hetzelfde voor EPSG:28992 tiles te realiseren. Dit is al eerder beschreven in
+http://justobjects.org/blog/2010/openstreetmap-tiles-for-dutch-projection-epsg28992. We proberen data
+in EPSG:28992 te laden.
+
+We nemen eerst een klein stukje planet-data (488kb) rond de Nieuwmarkt in Amsterdam (file:  nieuwmarkt.osm).
+
+Stappen ::
+
+	# DB aanmaken
+	createdb -E UTF8 -O osm gis28992 -T postgis2_template
+
+	# Data laden
+    osm2pgsql -W -U osm -d gis28992 -E EPSG:28992 --slim --cache-strategy sparse  amsterdam.osm.pbf
+    # DIT WERKT NIET: DE DATA WORDT GELADEN IN EPSG:4326
+
+    # data laden als EPSG:4326 (WGS84)
+    osm2pgsql -c -W -U osm -d gis28992 -E EPSG:4326 --slim --cache-strategy sparse  nieuwmarkt.osm
+
+	# MapProxy Install 1.5.0
+	# Python Pip
+    sudo apt-get install python-pip
+
+	# Deps
+    sudo apt-get install python-imaging python-yaml libproj0
+    sudo apt-get install  libgeos-dev python-lxml libgdal-dev python-shapely
+    sudo apt-get install  build-essential python-dev libjpeg-dev zlib1g-dev libfreetype6-dev
+    sudo pip install https://bitbucket.org/olt/pil-2009-raclette/get/default.tar.gz
+    sudo apt-get install  python-yaml
+
+    # MapProxy
+    sudo pip install MapProxy
+
+    # Check install
+    mapproxy-util --version
+
+
+
+
+
+
+
+
+
+
 
 
 
