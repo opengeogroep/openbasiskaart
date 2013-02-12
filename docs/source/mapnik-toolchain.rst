@@ -333,6 +333,9 @@ om hetzelfde voor EPSG:28992 tiles te realiseren. Dit is al eerder beschreven in
 http://justobjects.org/blog/2010/openstreetmap-tiles-for-dutch-projection-epsg28992. We proberen data
 in EPSG:28992 te laden.
 
+Data
+----
+
 We nemen eerst een klein stukje planet-data (488kb) rond de Nieuwmarkt in Amsterdam (file:  nieuwmarkt.osm).
 
 Stappen ::
@@ -341,41 +344,236 @@ Stappen ::
 	createdb -E UTF8 -O osm gis28992 -T postgis2_template
 
 	# Data laden
-    osm2pgsql -W -U osm -d gis28992 -E EPSG:28992 --slim --cache-strategy sparse  amsterdam.osm.pbf
-    # DIT WERKT NIET: DE DATA WORDT GELADEN IN EPSG:4326
+	osm2pgsql -W -U osm -d gis28992 -E EPSG:28992 --slim --cache-strategy sparse  amsterdam.osm.pbf
+	# DIT WERKT NIET: DE DATA WORDT GELADEN IN EPSG:4326
 
-    # data laden als EPSG:4326 (WGS84)
-    osm2pgsql -c -W -U osm -d gis28992 -E EPSG:4326 --slim --cache-strategy sparse  nieuwmarkt.osm
+	# data laden als EPSG:4326 (WGS84)
+	osm2pgsql -c -W -U osm -d gis28992 -E EPSG:4326 --slim --cache-strategy sparse  nieuwmarkt.osm
+
+MapProxy
+--------
+
+Deze stappen voor basis Mapproxy install en de demo app via mod_wsgi in Apache. Vervolgens MapProxy koppelen aan de bestaande Mapnik config. ::
+
+Basis Installatie
+~~~~~~~~~~~~~~~~~
+
+Deze stappen voor MapProxy 1.5.0 ::
 
 	# MapProxy Install 1.5.0
 	# Python Pip
-    sudo apt-get install python-pip
+	sudo apt-get install python-pip
 
 	# Deps
-    sudo apt-get install python-imaging python-yaml libproj0
-    sudo apt-get install  libgeos-dev python-lxml libgdal-dev python-shapely
-    sudo apt-get install  build-essential python-dev libjpeg-dev zlib1g-dev libfreetype6-dev
-    sudo pip install https://bitbucket.org/olt/pil-2009-raclette/get/default.tar.gz
-    sudo apt-get install  python-yaml
+	sudo apt-get install python-imaging python-yaml libproj0
+	sudo apt-get install  libgeos-dev python-lxml libgdal-dev python-shapely
+	sudo apt-get install  build-essential python-dev libjpeg-dev zlib1g-dev libfreetype6-dev
+	sudo pip install https://bitbucket.org/olt/pil-2009-raclette/get/default.tar.gz
+	sudo apt-get install  python-yaml
 
-    # MapProxy
-    sudo pip install MapProxy
+	# MapProxy
+	sudo pip install MapProxy
 
-    # Check install
-    mapproxy-util --version
+	# Check install
+	mapproxy-util --version
 
+mod_wsgi Koppelen
+~~~~~~~~~~~~~~~~~
 
+mod_wsgi is een van de vele manieren om MapProxy aan te roepen. Hier direct in Apache via mod_wsgi.
+We draaien hier gelijk de standaard demo app van MapProxy. ::
 
+	# mod_wsgi install
+	apt-get install libapache2-mod-wsgi
 
+	# create basis wsgi config for demo app
+	mdkir /opt/openbasiskaart/mapproxy/demo
+	cd /opt/openbasiskaart/mapproxy/demo
 
+	# create basis mapproxy config
+	# maakt  mapproxy.yaml  en seed.yaml aan
+	mapproxy-util create -t base-config ./
 
+	# maak WSGI Python webapp (config.py) voor deze config (mapproxy.yaml)
+	mapproxy-util create -t wsgi-app -f mapproxy.yaml config.py
 
+	# maak webserver config waarin mapproxy webapp gemapped:
 
+	# deze file aanmaken in /etc/apache2/sites-available/mapproxy
+	<VirtualHost *:80>
+		WSGIScriptAlias /mpdemo /opt/openbasiskaart/mapproxy/demo/config.py/
 
+		<Directory /opt/openbasiskaart/mapproxy/demo>
+		  Order deny,allow
+		  Allow from all
+		</Directory>
 
+		ErrorLog ${APACHE_LOG_DIR}/mapproxy-error.log
 
+		# Possible values include: debug, info, notice, warn, error, crit,
+		# alert, emerg.
+		LogLevel debug
 
+		CustomLog ${APACHE_LOG_DIR}/mapproxy-access.log combined
+	</VirtualHost>
 
+	# aanmaken site voor apache
+	a2site mapproxy
+	apache2ctl restart
+
+	# cache directory moet schrijfbaar zijn!!
+	# voorlopig zo
+	mkdir /opt/openbasiskaart/mapproxy/demo/cache_dir
+	chmod 777 /opt/openbasiskaart/mapproxy/demo/cache_dir
+
+    # met browser naar http://localhost/mpdemo OK
+
+Mapnik als Bron
+~~~~~~~~~~~~~~~
+
+Problemen ::
+
+	sudo pip install nik2img
+	nik2img.py osm.xml mapasd.png -f png256 -b 4.897 52.370 4.898 52.371
+	# geeft goede map
+
+	# test tile
+	http://localhost:8090/mpdemo/tms/1.0.0/mapnik_default_layer_EPSG900913/15/33659/43999.png
+
+    # hmm /usr/share/proj/epsg file toch niet op orde, deze toevoegen
+    <900913> +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over<>
+
+Default mapproxy.yaml met eigen OSM. ::
+
+	services:
+	  demo:
+	  kml:
+	  tms:
+		# needs no arguments
+	  wmts:
+	  wms:
+		# srs: ['EPSG:4326', 'EPSG:900913']
+		# image_formats: ['image/jpeg', 'image/png']
+		md:
+		  # metadata used in capabilities documents
+		  title: MapProxy WMS Proxy
+		  abstract: This is the fantastic MapProxy.
+		  online_resource: http://mapproxy.org/
+		  contact:
+			person: Your Name Here
+			position: Technical Director
+			organization:
+			address: Fakestreet 123
+			city: Somewhere
+			postcode: 12345
+			country: Germany
+			phone: +49(0)000-000000-0
+			fax: +49(0)000-000000-0
+			email: info@omniscale.de
+		  access_constraints:
+			This service is intended for private and evaluation use only.
+			The data is licensed as Creative Commons Attribution-Share Alike 2.0
+			(http://creativecommons.org/licenses/by-sa/2.0/)
+		  fees: 'None'
+
+	layers:
+	  - name: osm
+		title: Omniscale OSM WMS - osm.omniscale.net
+		sources: [osm_cache]
+	  - name: mapnik_default_layer
+		title: Mapnik Default
+		sources: [mapnik_default_cache]
+
+	caches:
+	  osm_cache:
+		grids: [GLOBAL_MERCATOR, global_geodetic_sqrt2]
+		sources: [osm_wms]
+
+	  mapnik_default_cache:
+		grids: [GLOBAL_MERCATOR]
+		sources: [default_mapnik]
+
+	sources:
+	  osm_wms:
+		type: wms
+		req:
+		  url: http://osm.omniscale.net/proxy/service?
+		  layers: osm
+
+	  default_mapnik:
+		type: mapnik
+		mapfile: /opt/openbasiskaart/mapnik/default/osm.xml
+		use_mapnik2: true
+		coverage:
+	#      bbox: [4.88,52.36,4.90,52.38]
+		  bbox: [543239.115,6865481.657,545465.505,6869128.129]
+		  srs: 'EPSG:900913'
+
+	grids:
+	  global_geodetic_sqrt2:
+		base: GLOBAL_GEODETIC
+		res_factor: 'sqrt2'
+
+	globals:
+	  # # cache options
+	  cache:
+		# where to store the cached images
+		base_dir: './cache_data'
+		# where to store lockfiles
+		lock_dir: './cache_data/locks'
+
+	  # image/transformation options
+	  image:
+		  resampling_method: nearest
+
+seed.yaml ::
+
+	seeds:
+	  myseed1:
+		caches: [osm_cache]
+		grids: [GLOBAL_MERCATOR]
+		coverages: [austria]
+		levels:
+		  to: 10
+		refresh_before:
+		  time: 2010-10-21T12:35:00
+
+	  mapnik_default_seed:
+		caches: [mapnik_default_cache]
+		grids: [GLOBAL_MERCATOR]
+		coverages: [mapnik_default_coverage]
+		levels:
+		  to: 15
+		refresh_before:
+		  time: 2010-10-21T12:35:00
+
+	cleanups:
+	  clean1:
+		caches: [osm_cache]
+		grids: [GLOBAL_MERCATOR]
+		remove_before:
+		  days: 7
+		  hours: 3
+		levels: [2,3,5,7]
+
+	coverages:
+	  austria:
+		bbox: [9.36, 46.33, 17.28, 49.09]
+		bbox_srs: "EPSG:4326"
+	  mapnik_default_coverage:
+		bbox: [543239.115,6865481.657,545465.505,6869128.129]
+		bbox_srs: "EPSG:900913"
+
+MapProxy met Mapnik2 lijkt moeizaam vanuit TMS, wel als we eerst seeden. ::
+
+	mapproxy-seed  -f mapproxy.yaml -c 4 seed.yaml --seed=mapnik_default_seed
+
+Uiteindelijk resultaat.
+
+.. figure:: _static/mapnik-met-mapproxy.jpg
+   :align: center
+
+   *Figuur MT-4 - Eerste resultaat Mapnik met Mapproxy (900913+file cache)*
 
 
 
