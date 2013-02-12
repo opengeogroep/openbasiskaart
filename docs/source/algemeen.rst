@@ -72,7 +72,7 @@ Deze gaat uit van:
 - ??
 
 GeoServer Toolchain
-------------------
+-------------------
 - osm2pgsql
 - osmosis
 - GeoServer
