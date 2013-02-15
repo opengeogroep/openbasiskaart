@@ -18,8 +18,8 @@ Als variant op de toolchain proberen we ``MapProxy`` via ``MBTiles`` opslag.
 We gaan in de volgende stappen te werk:
 
 1. standaard installatie PostGIS/Mapnik/renderd/mod_tile met tiles in EPSG:900913
-2. idem maar met tiles in EPSG:28992
-3. vervang renderd/mod_tile door MapProxy+MBTiles
+2. vervang renderd/mod_tile door MapProxy+MBTiles opslag
+3. als 2. maar met tiles in EPSG:28992
 4. onderzoek: meerdere styles (via TileMill)
 5. onderzoek: automatisch updaten
 6. heel NL tilen
@@ -575,6 +575,95 @@ Uiteindelijk resultaat.
 
    *Figuur MT-4 - Eerste resultaat Mapnik met Mapproxy (900913+file cache)*
 
+MBTiles Cache
+~~~~~~~~~~~~~
+
+SQLite3 installatie. http://www.sqlite.org ::
+
+	sudo apt-get install sqlite3 libsqlite3-dev
+
+Nieuwe Layer en Cache toevoegen in maproxy.yaml ::
+
+	.
+	.
+	layers:
+	  - name: osm
+		title: Omniscale OSM WMS - osm.omniscale.net
+		sources: [osm_cache]
+	  - name: mapnik_default_layer
+		title: MapnikDefault
+		sources: [mapnik_default_cache]
+	  - name: mapnik_mbtiles_default_layer
+		title: MapnikMBTilesDefault
+		sources: [mapnik_mbtiles_default_cache]
+	.
+	.
+	caches:
+	  osm_cache:
+		grids: [GLOBAL_MERCATOR, global_geodetic_sqrt2]
+		sources: [osm_wms]
+
+	  mapnik_default_cache:
+		sources: [default_mapnik]
+		grids: [GLOBAL_MERCATOR]
+
+	  mapnik_mbtiles_default_cache:
+		sources: [default_mapnik]
+		grids: [GLOBAL_MERCATOR]
+		cache:
+		  type: mbtiles
+		  filename: mapnik_default.mbtiles
+
+Seeden voor MBTiles cache. ::
+
+	sudo mapproxy-seed  -f mapproxy.yaml -c 1 seed.yaml --seed=mapnik_mbtiles_default_seed
+
+Notes:
+- only one worker/thread ``-c 1``.If larger than 1 gives error: ``"OperationalError: database is locked"``
+- only seeding works, not via TMS
+
+Error wanneer expliciet tilen via TMS. ::
+
+	2013-02-15 16:33:07,061 - CRITICAL - mapproxy.wsgiapp - fatal error in tms for /tms/1.0.0/mapnik_mbtiles_default_layer_EPSG900913/17/134637/175982.png
+	Traceback (most recent call last):
+	  File "/usr/local/lib/python2.7/dist-packages/mapproxy/wsgiapp.py", line 166, in __call__
+		resp = self.handlers[handler_name].handle(req)
+	  File "/usr/local/lib/python2.7/dist-packages/mapproxy/service/base.py", line 30, in handle
+		return handler(parsed_req)
+	  File "/usr/local/lib/python2.7/dist-packages/mapproxy/service/tile.py", line 74, in map
+		tile = layer.render(tile_request, use_profiles=tile_request.use_profiles, coverage=limit_to)
+	  File "/usr/local/lib/python2.7/dist-packages/mapproxy/service/tile.py", line 265, in render
+		tile = self.tile_manager.load_tile_coord(tile_coord, with_metadata=True)
+	  File "/usr/local/lib/python2.7/dist-packages/mapproxy/cache/tile.py", line 105, in load_tile_coord
+		created_tiles = creator.create_tiles([tile])
+	  File "/usr/local/lib/python2.7/dist-packages/mapproxy/cache/tile.py", line 227, in create_tiles
+		created_tiles = self._create_meta_tiles(meta_tiles)
+	  File "/usr/local/lib/python2.7/dist-packages/mapproxy/cache/tile.py", line 300, in _create_meta_tiles
+		created_tiles.extend(self._create_meta_tile(meta_tile))
+	  File "/usr/local/lib/python2.7/dist-packages/mapproxy/cache/tile.py", line 307, in _create_meta_tile
+		with self.tile_mgr.lock(main_tile):
+	  File "/usr/local/lib/python2.7/dist-packages/mapproxy/platform/cpython/lock.py", line 42, in __enter__
+		self.lock()
+	  File "/usr/local/lib/python2.7/dist-packages/mapproxy/platform/cpython/lock.py", line 72, in lock
+		raise LockTimeout('another process is still running with our lock')
+	LockTimeout: another process is still running with our lock
 
 
+sqlite3 command line. ::
+
+	sudo sqlite3  cache_data/mapnik_default.mbtiles
+	SQLite version 3.7.13 2012-06-11 02:05:22
+	Enter ".help" for instructions
+	Enter SQL statements terminated with a ";"
+	sqlite>  select * from sqlite_master;
+	table|tiles|tiles|2|CREATE TABLE tiles (
+					zoom_level integer,
+					tile_column integer,
+					tile_row integer,
+					tile_data blob)
+	table|metadata|metadata|3|CREATE TABLE metadata (name text, value text)
+	index|idx_tile|tiles|4|CREATE UNIQUE INDEX idx_tile on tiles
+					(zoom_level, tile_column, tile_row)
+	sqlite>  select * from tiles;
+	sqlite>  select * from metadata;
 
