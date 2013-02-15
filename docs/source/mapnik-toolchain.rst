@@ -619,8 +619,9 @@ Seeden voor MBTiles cache. ::
 	sudo mapproxy-seed  -f mapproxy.yaml -c 1 seed.yaml --seed=mapnik_mbtiles_default_seed
 
 Notes:
-- only one worker/thread ``-c 1``.If larger than 1 gives error: ``"OperationalError: database is locked"``
-- only seeding works, not via TMS
+
+	- only one worker/thread ``-c 1``.If larger than 1 gives error: ``"OperationalError: database is locked"``
+	- only seeding works, not via TMS
 
 Error wanneer expliciet tilen via TMS. ::
 
@@ -649,7 +650,38 @@ Error wanneer expliciet tilen via TMS. ::
 	LockTimeout: another process is still running with our lock
 
 
-sqlite3 command line. ::
+Seeding en Cleanup (remove) voor default MBTiles cache. seed.yaml ::
+
+	seeds:
+	.
+	.
+	  mapnik_mbtiles_default_seed:
+		caches: [mapnik_mbtiles_default_cache]
+		grids: [GLOBAL_MERCATOR]
+		coverages: [mapnik_default_coverage]
+		levels:
+		  to: 17
+	.
+	.
+	cleanups:
+	  clean1:
+	    caches: [osm_cache]
+	    grids: [GLOBAL_MERCATOR]
+	    remove_before:
+	    days: 7
+	    hours: 3
+	    levels: [2,3,5,7]
+
+	  clean_mapnik_mbtiles_default:
+	    caches: [mapnik_mbtiles_default_cache]
+	    grids: [GLOBAL_MERCATOR]
+	    levels: [2,3,5,7]
+
+Commando voor cleanup. ::
+
+	sudo mapproxy-seed  -f mapproxy.yaml -c 1 seed.yaml --cleanup=clean_mapnik_mbtiles_default
+
+Util ``sqlite3`` command line om database te beheren. ::
 
 	sudo sqlite3  cache_data/mapnik_default.mbtiles
 	SQLite version 3.7.13 2012-06-11 02:05:22
