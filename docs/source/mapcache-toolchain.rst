@@ -182,7 +182,9 @@ Mapcache
 --------
 Installeer de tiling applicatie. Dit is een apache module ::
 
-	sudo apt-get install mapcache-cgi mapcache-tools
+	sudo apt-get install libmapcache mapcache-cgi mapcache-tools libapache2-mod-mapcache
+	mkdir ~/osm-demo/mapcache/cache
+	sudo chown www-data ~/osm-demo/mapcache/cache/
 
 Mapcache_seed
 -------------
