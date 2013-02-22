@@ -73,16 +73,19 @@ Install requirements ::
 Mapserver
 ---------
 De mapserver om de plaatjes te renderen ::
+
 	sudo apt-get install cgi-mapserver mapserver-bin
 
 Test in browser of mapserver het doet ::
 
 	http://localhost/cgi-bin/mapserv
+
 Als het goed is staat er nu iets als "No query information to decode. QUERY STRING is set, but empty."
 
 Mapcache
 --------
 Installeer de tiling applicatie. Dit is een apache module ::
+
 	sudo apt-get install mapcache-cgi mapcache-tools
 
 Mapcache_seed
@@ -92,6 +95,7 @@ De nieuwste versie is nodig, omdat er een bugje in de oude zat. TODO kijken of d
 Sqlite3
 -------
 Voor mbtiles nodig. ::
+
 	sudo apt-get install sqlite3
 
 Data
