@@ -78,8 +78,11 @@ Maak de service in de mapfile
 Tiling
 ======
 Maak mbtiles cache ::
+
 	sqlite3 osmcache.mbtiles
+
 Voer uit ::
+
 	create table if not exists images(
 	  tile_id text,
 	  tile_data blob,
@@ -102,6 +105,7 @@ Voer uit ::
 	     images.tile_data as tile_data
 	  from map
 	     join images on images.tile_id = map.tile_id;
+
 
 Setup mapcache
 mapcache.xml
