@@ -282,7 +282,7 @@ Geef www-date rechten op de cache ::
 Setup mapcache
 --------------
 
-De configuratie voor mapcache :: xml
+De configuratie voor mapcache :: 
 
 	<?xml version="1.0" encoding="UTF-8"?>
 
