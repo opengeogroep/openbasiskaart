@@ -125,13 +125,51 @@ Download mapserverutils ::
     Execute the mapserver-utils makefile to generate the mapfile. Note that the first time you run 'make' several large files will be downloaded (country boundaries, etc.). This will happen only the first time.
 
       cd mapserver-utils-svn
-      make
 	cd data 
 	gedit Makefile
 
 	#Verander bij boundary lines de link naar >http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_boundary_lines_land.zip<\
 	# Verander bij unzip van boundary lines de parameter die aan unzip wordt meegegeven naar >ne_10m_admin_0_boundary_lines_land.zip<
 	make
+	cd ..
+	make
+
+Comment de regel uit waarop staat ::
+
+	#CONFIG "PROJ_LIB" "/home/<USERNAME>/<path_to_mapserverutil>"
+
+Maak verbinding naar de osm database en voer het volgende script uit ::
+
+	
+
+	-- DROP VIEW osm_new_waterways_gen0_view;
+
+	CREATE OR REPLACE VIEW osm_new_waterways_gen0_view AS 
+	 SELECT osm_new_waterways.id, osm_new_waterways.osm_id, osm_new_waterways.name, osm_new_waterways.type, st_simplifypreservetopology(osm_new_waterways.geometry, 200::double precision) AS geometry
+	   FROM osm_new_waterways;
+
+	ALTER TABLE osm_new_waterways_gen0_view
+	  OWNER TO osm;
+
+	-- View: osm_new_waterways_gen1_view
+
+	-- DROP VIEW osm_new_waterways_gen1_view;
+
+	CREATE OR REPLACE VIEW osm_new_waterways_gen1_view AS 
+	 SELECT osm_new_waterways.id, osm_new_waterways.osm_id, osm_new_waterways.name, osm_new_waterways.type, st_simplifypreservetopology(osm_new_waterways.geometry, 50::double precision) AS geometry
+	   FROM osm_new_waterways;
+
+	ALTER TABLE osm_new_waterways_gen1_view
+	  OWNER TO osm;
+
+
+	CREATE TABLE osm_new_waterways_gen1 AS
+	  SELECT * FROM osm_new_waterways_gen1_view;
+
+
+	CREATE TABLE osm_new_waterways_gen0 AS
+	  SELECT * FROM osm_new_waterways_gen0_view;
+
 
 Mapcache
 --------
