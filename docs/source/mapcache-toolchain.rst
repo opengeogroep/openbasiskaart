@@ -356,3 +356,10 @@ seed de tiles ::
 
 	mapcache_seed -c mapcache-osm.xml -t osm -g rd -z 0,15
 
+
+Nog te doen
+===========
+
+Invalidaten van tiles
+Osmosis??
+
