@@ -277,6 +277,77 @@ Geef www-date rechten op de cache ::
 
 
 Setup mapcache
+--------------
+
+De configuratie voor mapcache :: xml
+
+	<?xml version="1.0" encoding="UTF-8"?>
+
+	<!-- see the accompanying mapcache.xml.sample for a fully commented configuration file -->
+
+	<mapcache>
+		<cache name="mbtiles" type="mbtiles">
+		   <dbfile>/opt/openbasiskaart/cache/osmcache.mbtiles</dbfile>
+		</cache>
+
+	   <source name="osm" type="wms">
+	      <getmap>
+		 <params>
+		    <FORMAT>image/png</FORMAT>
+		    <LAYERS>default</LAYERS>
+		    <SRS>epsg:28992</SRS>
+		 </params>
+	      </getmap>
+	      
+	      <http>
+		 <url>http://localhost/cgi-bin/mapserv?map=/home/meine/dev/osm/basemaps-master/osm-default.map</url>
+	      </http>
+	   </source>
+	   <grid name="rd">
+	      <metadata>
+		 <title>Rijksdriehoek-stelsel</title>
+	      </metadata>
+	      <extent>12000,304000,280000,620000</extent>
+	      <srs>epsg:28992</srs>
+	      <resolutions>3440.64 1720.32 860.16 430.08 215.04 107.52 53.76 26.88 13.44 6.72 3.36 1.68 0.84 0.42 0.21</resolutions>
+	      <units>m</units>
+	      <size>256 256</size>
+	    </grid>
+	    <tileset name="osm">
+	      <metadata>
+		 <title>OSM MapServer served map</title>
+		 <abstract>see http://trac.osgeo.org/mapserver/wiki/RenderingOsmDataUbuntu</abstract>
+	      </metadata>
+	      <source>osm</source>
+	      <cache>mbtiles</cache>
+	      <format>PNG</format>
+	      <grid>rd</grid>
+	   </tileset>
+
+
+	   <default_format>JPEG</default_format>
+
+	   <service type="wms" enabled="true">
+	      <full_wms>assemble</full_wms>
+	      <resample_mode>bilinear</resample_mode>
+	      <format>JPEG</format>
+	      <maxsize>4096</maxsize>
+	   </service>
+	   <service type="wmts" enabled="true"/>
+	   <service type="tms" enabled="true"/>
+	   <service type="kml" enabled="true"/>
+	   <service type="gmaps" enabled="true"/>
+	   <service type="ve" enabled="true"/>
+	   <service type="demo" enabled="true"/>
+
+	   <errors>log</errors>
+	   <lock_dir>/tmp</lock_dir>
+
+	</mapcache>
+
+
+
+
 mapcache.xml
 Let op:
 Expiration data
