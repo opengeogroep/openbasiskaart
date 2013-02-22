@@ -97,9 +97,6 @@ Installeer de tiling applicatie. Dit is een apache module ::
 	mkdir ~/osm-demo/mapcache/cache
 	sudo chown www-data ~/osm-demo/mapcache/cache/
 
-Mapcache_seed
--------------
-De nieuwste versie is nodig, omdat er een bugje in de oude zat. TODO kijken of dit nog nodig is
 
 Sqlite3
 -------
