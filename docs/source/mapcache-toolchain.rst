@@ -230,8 +230,16 @@ Test de mapfile door naar ::
 
 Te gaan. Als er een pagina met openlayers en de kaart verschijnt, is het goed gegaan.
 
+Kopieër de mapfile en de datamap naar de gewenste plek.
+
 Tiling
 ======
+
+Maak het cache pad een geef www-data schrijfrechten ::
+
+	mkdir ~/osm-demo/mapcache/cache
+	sudo chown www-data ~/osm-demo/mapcache/cache/
+
 Maak mbtiles cache ::
 
 	sqlite3 osmcache.mbtiles
@@ -260,6 +268,12 @@ Voer uit ::
 	     images.tile_data as tile_data
 	  from map
 	     join images on images.tile_id = map.tile_id;
+	.exit
+
+Geef www-date rechten op de cache ::
+
+	sudo chown www-data osmcache.mbtiles
+	
 
 
 Setup mapcache
