@@ -102,7 +102,8 @@ Data
 ====
 
 Data downloaden 
---------------- ::
+--------------- 
+::
 	mkdir /opt/openbasiskaart/data
 
 	# PBF download (53 MB)
@@ -112,7 +113,7 @@ Data inladen
 ------------
 
 Lees de data (voorbewerking van imposm) ::
-	sudo imposm --read amsterdam.osm.pbf
+	sudo imposm --proj=EPSG:28992 --read amsterdam.osm.pbf
 
 Service
 =======
