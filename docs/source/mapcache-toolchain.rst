@@ -88,6 +88,58 @@ Test in browser of mapserver het doet ::
 Als het goed is staat er nu iets als "No query information to decode. QUERY STRING is set, but empty."
 
 
+
+Mapcache
+--------
+Installeer de tiling applicatie. Dit is een apache module ::
+
+	sudo apt-get install libmapcache mapcache-cgi mapcache-tools libapache2-mod-mapcache
+	mkdir ~/osm-demo/mapcache/cache
+	sudo chown www-data ~/osm-demo/mapcache/cache/
+
+Mapcache_seed
+-------------
+De nieuwste versie is nodig, omdat er een bugje in de oude zat. TODO kijken of dit nog nodig is
+
+Sqlite3
+-------
+Voor mbtiles nodig. ::
+
+	sudo apt-get install sqlite3
+
+Data
+====
+
+Data downloaden 
+--------------- 
+::
+
+	mkdir /opt/openbasiskaart/data
+
+	# PBF download (53 MB)
+	wget http://osm-metro-extracts.s3.amazonaws.com/amsterdam.osm.pbf
+
+Data inladen
+------------
+
+Lees de data (voorbewerking van imposm) ::
+
+	sudo imposm --proj=EPSG:28992 --read amsterdam.osm.pbf
+
+Schrijf de data naar postgis ::
+
+	sudo imposm --write --database osm --proj=EPSG:28992 --host localhost --user osm --port 5432
+
+Check of de data goed is geschreven (in relatie tot de herprojectie) ::
+
+	select distinct(st_srid(geometry)) from osm_new aeroways;
+
+Als het goed is komt hier alleen 28992 uit. Zo niet, dan moet je iets herstellen zodat dit wel het geval wordt!
+
+Service
+=======
+Maak de service in de mapfile
+
 Mapserver utils
 ---------------
 	
@@ -174,60 +226,9 @@ Maak verbinding naar de osm database en voer het volgende script uit ::
 Test de mapfile door naar ::
 
 	
-http://yourserver.tld/cgi-bin/mapserv?map=/path/to/osm-demo/mapserver-utils-svn/osm-outlined,google.map&mode=browse&template=openlayers&layers=all
+	http://yourserver.tld/cgi-bin/mapserv?map=/path/to/osm-demo/mapserver-utils-svn/osm-outlined,google.map&mode=browse&template=openlayers&layers=all
 
 Te gaan. Als er een pagina met openlayers en de kaart verschijnt, is het goed gegaan.
-
-Mapcache
---------
-Installeer de tiling applicatie. Dit is een apache module ::
-
-	sudo apt-get install libmapcache mapcache-cgi mapcache-tools libapache2-mod-mapcache
-	mkdir ~/osm-demo/mapcache/cache
-	sudo chown www-data ~/osm-demo/mapcache/cache/
-
-Mapcache_seed
--------------
-De nieuwste versie is nodig, omdat er een bugje in de oude zat. TODO kijken of dit nog nodig is
-
-Sqlite3
--------
-Voor mbtiles nodig. ::
-
-	sudo apt-get install sqlite3
-
-Data
-====
-
-Data downloaden 
---------------- 
-::
-
-	mkdir /opt/openbasiskaart/data
-
-	# PBF download (53 MB)
-	wget http://osm-metro-extracts.s3.amazonaws.com/amsterdam.osm.pbf
-
-Data inladen
-------------
-
-Lees de data (voorbewerking van imposm) ::
-
-	sudo imposm --proj=EPSG:28992 --read amsterdam.osm.pbf
-
-Schrijf de data naar postgis ::
-
-	sudo imposm --write --database osm --proj=EPSG:28992 --host localhost --user osm --port 5432
-
-Check of de data goed is geschreven (in relatie tot de herprojectie) ::
-
-	select distinct(st_srid(geometry)) from osm_new aeroways;
-
-Als het goed is komt hier alleen 28992 uit. Zo niet, dan moet je iets herstellen zodat dit wel het geval wordt!
-
-Service
-=======
-Maak de service in de mapfile
 
 Tiling
 ======
