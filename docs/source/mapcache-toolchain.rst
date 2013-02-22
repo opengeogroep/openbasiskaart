@@ -28,7 +28,12 @@ https://wiki.ubuntu.com/UbuntuGIS ! ::
 	sudo apt-get update
 
 Installeer apache ::
+
 	sudo apt-get install apache2
+
+Installeer git ::
+
+	sudo apt-get install git
 
 
 Postgresql/PostGIS
@@ -82,6 +87,52 @@ Test in browser of mapserver het doet ::
 
 Als het goed is staat er nu iets als "No query information to decode. QUERY STRING is set, but empty."
 
+
+Mapserver utils
+---------------
+	
+Zie ook http://trac.osgeo.org/mapserver/wiki/RenderingOsmDataUbuntu#Installmapserver-utilsmapfilegenerator
+Download mapserverutils ::
+
+	git clone https://github.com/mapserver/basemaps.git
+	cd basemaps
+	gedit osmbase.map
+
+
+	-------------------8<------------------------
+	  WEB
+	...
+	    IMAGEPATH "/tmp/ms_tmp/"
+	    IMAGEURL "/ms_tmp/"
+	 END
+	...
+	-------------------->8-----------------------
+
+	  vi Makefile
+	-------------------8<------------------------
+	OSM_SRID=28992
+	OSM_UNITS=meters
+	OSM_EXTENT=12000 304000 280000 620000
+	...
+	STYLE=default
+	...
+	OSM_WMS_SRS=EPSG:28992
+	-------------------->8-----------------------
+
+	mkdir /tmp/ms_tmp
+	chmod 777 /tmp/ms_tmp
+
+    Execute the mapserver-utils makefile to generate the mapfile. Note that the first time you run 'make' several large files will be downloaded (country boundaries, etc.). This will happen only the first time.
+
+      cd mapserver-utils-svn
+      make
+	cd data 
+	gedit Makefile
+
+	#Verander bij boundary lines de link naar >http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_boundary_lines_land.zip<\
+	# Verander bij unzip van boundary lines de parameter die aan unzip wordt meegegeven naar >ne_10m_admin_0_boundary_lines_land.zip<
+	make
+
 Mapcache
 --------
 Installeer de tiling applicatie. Dit is een apache module ::
@@ -104,6 +155,7 @@ Data
 Data downloaden 
 --------------- 
 ::
+
 	mkdir /opt/openbasiskaart/data
 
 	# PBF download (53 MB)
@@ -119,6 +171,12 @@ Lees de data (voorbewerking van imposm) ::
 Schrijf de data naar postgis ::
 
 	sudo imposm --write --database osm --proj=EPSG:28992 --host localhost --user osm --port 5432
+
+Check of de data goed is geschreven (in relatie tot de herprojectie) ::
+
+	select distinct(st_srid(geometry)) from osm_new aeroways;
+
+Als het goed is komt hier alleen 28992 uit. Zo niet, dan moet je iets herstellen zodat dit wel het geval wordt!
 
 Service
 =======
