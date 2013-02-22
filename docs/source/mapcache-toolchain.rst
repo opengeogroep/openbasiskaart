@@ -190,6 +190,10 @@ Comment de regel uit waarop staat ::
 
 	#CONFIG "PROJ_LIB" "/home/<USERNAME>/<path_to_mapserverutil>"
 
+Verzeker je ervan dan bij de srs-en 28992 staat ::
+
+	"wms_srs" "EPSG:28992 EPSG:4326 EPSG:3857 EPSG:2154 EPSG:310642901 EPSG:4171 EPSG:310024802 EPSG:310915814 EPSG:310486805 EPSG:310702807 EPSG:310700806 EPSG:310547809 EPSG:310706808 EPSG:310642810 EPSG:310642801 EPSG:310642812 EPSG:310032811 EPSG:310642813 EPSG:2986 "
+
 Maak verbinding naar de osm database en voer het volgende script uit ::
 
 	
@@ -331,10 +335,10 @@ De configuratie voor mapcache ::
 		<default_format>JPEG</default_format>
 
 		<service type="wms" enabled="true">
-		<full_wms>assemble</full_wms>
-		<resample_mode>bilinear</resample_mode>
-		<format>JPEG</format>
-		<maxsize>4096</maxsize>
+			<full_wms>assemble</full_wms>
+			<resample_mode>bilinear</resample_mode>
+			<format>JPEG</format>
+			<maxsize>4096</maxsize>
 		</service>
 		<service type="wmts" enabled="true"/>
 		<service type="tms" enabled="true"/>
@@ -346,14 +350,12 @@ De configuratie voor mapcache ::
 		<lock_dir>/tmp</lock_dir>
 	</mapcache>
 
-
-
-
-mapcache.xml
-Let op:
-Expiration data
+Sla dit bestand op en zet het in /opt/openbasiskaart/cache.
 
 Seeding
 =======
-	mapcache_seed -c mapcache-osm.xml -t osm -g rd
+
+seed de tiles ::
+
+	mapcache_seed -c mapcache-osm.xml -t osm -g rd -z 0,15
 
