@@ -18,7 +18,15 @@ Afhankelijkheden
 
 Eerst afhankelijkheden installeren ::
 
-    ??
+UbuntuGIS PPA
+-------------
+
+https://wiki.ubuntu.com/UbuntuGIS ! ::
+
+	# to add the UbuntuGIS PPA and update your packaging system.
+	sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+	sudo apt-get update
+
 
 
 Postgresql/PostGIS
@@ -41,4 +49,66 @@ Imposm
 ------
 
 Imposm wordt gebruikt voor inlezen OSM Planet dump in Postgres...
+
+
+Mapserver
+---------
+
+Mapcache
+--------
+
+Mapcache_seed
+-------------
+De nieuwste versie is nodig, omdat er een bugje in de oude zat.
+
+Sqlite3
+-------
+
+Data
+====
+
+
+Data downloaden
+Data inladen met imposm
+
+Service
+=======
+Maak de service in de mapfile
+
+Tiling
+======
+Maak mbtiles cache ::
+	sqlite3 osmcache.mbtiles
+Voer uit ::
+	create table if not exists images(
+	  tile_id text,
+	  tile_data blob,
+	  primary key(tile_id));
+	create table if not exists map (
+	  zoom_level integer,
+	  tile_column integer,
+	  tile_row integer,
+	  tile_id text,
+	  foreign key(tile_id) references images(tile_id),
+	  primary key(tile_row,tile_column,zoom_level));
+	create table if not exists metadata(
+	  name text,
+	  value text); -- not used or populated yet
+	create view if not exists tiles
+	  as select
+	     map.zoom_level as zoom_level,
+	     map.tile_column as tile_column,
+	     map.tile_row as tile_row,
+	     images.tile_data as tile_data
+	  from map
+	     join images on images.tile_id = map.tile_id;
+
+Setup mapcache
+mapcache.xml
+Let op:
+Expiration data
+
+Seeding
+=======
+	mapcache_seed -c mapcache-osm.xml -t osm -g rd
 
