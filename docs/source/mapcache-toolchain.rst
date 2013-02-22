@@ -101,8 +101,8 @@ Voor mbtiles nodig. ::
 Data
 ====
 
-Data downloaden ::
----------------
+Data downloaden 
+--------------- ::
 	mkdir /opt/openbasiskaart/data
 
 	# PBF download (53 MB)
