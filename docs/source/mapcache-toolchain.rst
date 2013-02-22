@@ -113,9 +113,11 @@ Data inladen
 ------------
 
 Lees de data (voorbewerking van imposm) ::
+
 	sudo imposm --proj=EPSG:28992 --read amsterdam.osm.pbf
 
 Schrijf de data naar postgis ::
+
 	sudo imposm --write --database osm --proj=EPSG:28992 --host localhost --user osm --port 5432
 
 Service
