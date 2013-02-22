@@ -141,7 +141,7 @@ Comment de regel uit waarop staat ::
 Maak verbinding naar de osm database en voer het volgende script uit ::
 
 	
-
+	set session authorization osm;
 	-- DROP VIEW osm_new_waterways_gen0_view;
 
 	CREATE OR REPLACE VIEW osm_new_waterways_gen0_view AS 
@@ -170,6 +170,13 @@ Maak verbinding naar de osm database en voer het volgende script uit ::
 	CREATE TABLE osm_new_waterways_gen0 AS
 	  SELECT * FROM osm_new_waterways_gen0_view;
 
+
+Test de mapfile door naar ::
+
+	
+http://yourserver.tld/cgi-bin/mapserv?map=/path/to/osm-demo/mapserver-utils-svn/osm-outlined,google.map&mode=browse&template=openlayers&layers=all
+
+Te gaan. Als er een pagina met openlayers en de kaart verschijnt, is het goed gegaan.
 
 Mapcache
 --------
