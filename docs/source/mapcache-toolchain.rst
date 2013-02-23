@@ -357,6 +357,11 @@ seed de tiles ::
 	mapcache_seed -c mapcache-osm.xml -t osm -g rd -z 0,15
 
 
+Andere stylen
+=============
+Andere stijlen die gemaakt zijn, zijn onder andere de google en de bing styles. Dit is makkelijk te genereren door naar je mapserver utils folder te gaan, de makefile aan te passen. Bij STYLE kan hier ipv default "google" of "bing" worden ingevuld. Run het command make en de mapfile wordt gegenereert (vergeet niet de PROJ variabele uit te commenten).
+Hierna de mbtiles caches te maken en daarna de mapcache-config.xml aanpassen aan de nieuwe mapfile en de mbtiles caches voor google/bing/etc.. Restart apache en seed de nieuwe tilesets.
+
 Nog te doen
 ===========
 
