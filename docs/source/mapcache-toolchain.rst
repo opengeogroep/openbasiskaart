@@ -311,7 +311,8 @@ De configuratie voor mapcache ::
 			<metadata>
 			 <title>Rijksdriehoek-stelsel</title>
 			</metadata>
-			<extent>12000,304000,280000,620000</extent>
+			<!--extent>12000,304000,280000,620000</extent-->
+			<extent>98827,469579,142183,502096</extent> <!-- Extent adam -->
 			<srs>epsg:28992</srs>
 			<resolutions>3440.64 1720.32 860.16 430.08 215.04 107.52 53.76 26.88 13.44 6.72 3.36 1.68 0.84 0.42 0.21</resolutions>
 			<units>m</units>
