@@ -354,7 +354,7 @@ Seeding
 
 seed de tiles ::
 
-	mapcache_seed -c mapcache-osm.xml -t osm -g rd -z 0,15
+	mapcache_seed -c mapcache-osm.xml -t osm -g rd -z 0,15 -n <numofthreads>
 
 
 Andere stylen
