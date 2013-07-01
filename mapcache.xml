@@ -1,23 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- see the accompanying mapcache.xml.sample for a fully commented configuration file -->
-
 <mapcache>
         <!--cache name="mbtiles" type="mbtiles">
            <dbfile>/mnt/data/tiles/mapserver/osmcache.mbtiles</dbfile>
         </cache-->
-	<cache name="disk" type="disk">
+        <cache name="disk" type="disk">
 
-		<base>/mnt/data/tiles/mapserver/default</base>
+                <base>/mnt/data/tiles/mapserver/default</base>
 
-		<symlink_blank/>
-	</cache>
+                <symlink_blank/>
+        </cache>
+        <source name="osm-nb" type="wms">
+                <getmap>
+                 <params>
+                    <FORMAT>image/png</FORMAT>
+                    <LAYERS>default</LAYERS>
+                    <SRS>EPSG:28992</SRS>
+                 </params>
+                </getmap>
+
+                <http>
+                 <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/var/opt/openbasiskaart/mapserver/basemaps/osm-nobuildings.map</url>
+                </http>
+        </source>
         <source name="osm" type="wms">
                 <getmap>
                  <params>
                     <FORMAT>image/png</FORMAT>
                     <LAYERS>default</LAYERS>
-                    <SRS>epsg:28992</SRS>
+                    <SRS>EPSG:28992</SRS>
                  </params>
                 </getmap>
 
@@ -32,23 +42,34 @@
                 </metadata>
                 <!--extent>12000,304000,280000,620000</extent-->
                 <!--extent>98827,469579,142183,502096</extent--> <!-- Extent adam -->
-		<extent>-285401.920,22598.080,595401.920,903401.920</extent>
-                <srs>epsg:28992</srs>
+                <extent>-285401.920,22598.080,595401.920,903401.920</extent>
+                <srs>EPSG:28992</srs>
                 <resolutions>3440.64 1720.32 860.16 430.08 215.04 107.52 53.76 26.88 13.44 6.72 3.36 1.68 0.84 0.42 0.21</resolutions>
                 <units>m</units>
                 <size>256 256</size>
         </grid>
+        <tileset name="osm-nb">
+                <metadata>
+                 <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart zonder gebouwen</title>
+                 <abstract>Basiskaart op basis van OpenStreetMap data (copyright OpenStreetMap contributors, CC-BY-SA, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+                </metadata>
+                <source>osm-nb</source>
+                <cache>disk</cache>
+                <format>PNG</format>
+                <grid>rd</grid>
+                <expires>3600</expires>
+        </tileset>
         <tileset name="osm">
                 <metadata>
-                 <title>OSM MapServer served map</title>
-                 <abstract>see http://trac.osgeo.org/mapserver/wiki/RenderingOsmDataUbuntu</abstract>
+                 <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart</title>
+                 <abstract>Basiskaart op basis van OpenStreetMap data (copyright OpenStreetMap contributors, CC-BY-SA, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
                 </metadata>
                 <source>osm</source>
                 <cache>disk</cache>
                 <format>PNG</format>
                 <grid>rd</grid>
+                <expires>3600</expires>
         </tileset>
-
 
         <default_format>PNG</default_format>
 
@@ -60,10 +81,11 @@
         </service>
         <service type="wmts" enabled="true"/>
         <service type="tms" enabled="true"/>
-        <service type="kml" enabled="true"/>
-        <service type="gmaps" enabled="true"/>
-        <service type="ve" enabled="true"/>
+        <service type="kml" enabled="false"/>
+        <service type="gmaps" enabled="false"/>
+        <service type="ve" enabled="false"/>
         <service type="demo" enabled="true"/>
         <errors>log</errors>
         <lock_dir>/tmp</lock_dir>
 </mapcache>
+
