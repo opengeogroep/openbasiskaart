@@ -51,7 +51,7 @@
         <tileset name="osm-nb">
                 <metadata>
                  <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart zonder gebouwen</title>
-                 <abstract>Basiskaart op basis van OpenStreetMap data (copyright OpenStreetMap contributors, CC-BY-SA, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+                 <abstract>Basiskaart op basis van OpenStreetMap data (copyright OpenStreetMap contributors, CC-BY-SA, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
                 </metadata>
                 <source>osm-nb</source>
                 <cache>disk</cache>
@@ -62,7 +62,7 @@
         <tileset name="osm">
                 <metadata>
                  <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart</title>
-                 <abstract>Basiskaart op basis van OpenStreetMap data (copyright OpenStreetMap contributors, CC-BY-SA, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+                 <abstract>Basiskaart op basis van OpenStreetMap data (copyright OpenStreetMap contributors, CC-BY-SA, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
                 </metadata>
                 <source>osm</source>
                 <cache>disk</cache>
