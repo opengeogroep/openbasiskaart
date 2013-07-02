@@ -79,7 +79,7 @@ Afhankelijkheden
 
 Eerst afhankelijkheden installeren. ::
 
-     sudo apt-get install libgdal-dev apache2 apt-show-versions
+     sudo apt-get install libgdal-dev gdal-bin apache2 apt-show-versions
 
 
 Versies support libs:
@@ -177,7 +177,7 @@ Vanuit repo install. Dit installeert/activeert mod_tile en renderd. ::
 
 Dit download ook automatisch ``/usr/share/mapnik-osm-data/world_boundaries-spherical.tgz`` (50MB) en
 ``/usr/share/mapnik-osm-data/processed_p.tar.bz2`` (500MB) en
-``/usr/share/mapnik-osm-data/shoreline_300.tar.bz2`` (40MB). Output. ::
+``/usr/share/mapnik-osm-data/shoreline_300.tar.bz2`` (40MB).
 
 Notes:
 
@@ -353,7 +353,7 @@ Stappen ::
 MapProxy
 --------
 
-Deze stappen voor basis Mapproxy install en de demo app via mod_wsgi in Apache. Vervolgens MapProxy koppelen aan de bestaande Mapnik config. ::
+Deze stappen voor basis Mapproxy install en de demo app via mod_wsgi in Apache. Vervolgens MapProxy koppelen aan de bestaande Mapnik config.
 
 Basis Installatie
 ~~~~~~~~~~~~~~~~~

@@ -66,10 +66,10 @@ Mapcache Toolchain
 Deze gaat uit van:
 
 - Imposm
-- Mapcache
-- MapServer
-- MBTiles   (ipv file system)
-- ??
+- MapServer WMS
+- MapCache tiling server
+- Tiles op filesysteem
+- Styling via MapServer Basemaps: https://github.com/opengeogroep/basemaps
 
 GeoServer Toolchain
 -------------------
