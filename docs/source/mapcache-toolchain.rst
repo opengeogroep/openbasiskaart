@@ -7,6 +7,8 @@ Mapcache Toolchain
 Hieronder staat de "toolchain" beschreven om OSM RD Tiles te genereren en te serveren volgens
 de "MapCache Toolchain". Dit is een toolchain op basis van Imposm, MapServer en MapCache.
 
+Dit is de uiteindelijk gekozen toolchain voor OBKN, dus relevant.
+
 
 Installaties
 ============

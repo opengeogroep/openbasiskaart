@@ -24,6 +24,8 @@ We gaan in de volgende stappen te werk:
 5. onderzoek: automatisch updaten
 6. heel NL tilen
 
+*NB deze toolchain wordt niet gebruikt in de OpenBasisKaart maar is handig ter referentie.*
+
 Installaties
 ============
 
