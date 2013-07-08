@@ -7,6 +7,8 @@ Mapcache Toolchain
 Hieronder staat de "toolchain" beschreven om OSM RD Tiles te genereren en te serveren volgens
 de "MapCache Toolchain". Dit is een toolchain op basis van Imposm, MapServer en MapCache.
 
+Dit is de uiteindelijk gekozen toolchain voor OBKN, dus relevant.
+
 
 Installaties
 ============
@@ -16,7 +18,7 @@ Hieronder de stappen voor installatie van de verschillende tools.
 Afhankelijkheden
 ----------------
 
-Eerst afhankelijkheden installeren ::
+Eerst afhankelijkheden installeren.
 
 UbuntuGIS PPA
 -------------
@@ -69,6 +71,7 @@ Imposm
 Imposm wordt gebruikt voor inlezen OSM Planet dump in Postgres.
 Zie ook http://imposm.org/docs/imposm/latest/install.html
 Install requirements ::
+
 	sudo apt-get install build-essential python-dev protobuf-compiler \
                       libprotobuf-dev libtokyocabinet-dev python-psycopg2 \
                       libgeos-c1

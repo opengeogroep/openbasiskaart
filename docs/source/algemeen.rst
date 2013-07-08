@@ -5,11 +5,11 @@
 Algemeen
 ********
 
-Hieronder staat algemene informatie over het hoe en waarom van de OpenGeoGroep OpenBasiskaart.
+Hieronder staat algemene informatie over het hoe en waarom van de OpenGeoGroep (OGG) OpenBasiskaart Nederland (OBKN).
 Zie ook de website: http://openbasiskaart.nl. Deze documentatie wordt automatisch gegenereerd vanuit het bijbehorende
-GitHub project: https://github.com/opengeogroep/openbasiskaart
+GitHub project: https://github.com/opengeogroep/openbasiskaart en heeft de nadruk op de gebruikte techniek.
 
-Waarom OpenBasiskaart ?
+Waarom OpenBasisKaart ?
 =======================
 
 Vanuit zowel OGG-klanten als de OGG-leden is vaker de wens uitgesproken om OpenStreetMap in
@@ -55,24 +55,27 @@ Mapnik Toolchain
 Deze gaat uit van:
 
 - osm2pgsql
-- mapnik
+- Mapnik
 - MBTiles   (ipv file system)
 - MapProxy (ipv mod_tile)
-- osmosis (up to date houden tiles)
+- Osmosis (up to date houden tiles)
 
-Mapcache Toolchain
+MapCache Toolchain
 ------------------
 
 Deze gaat uit van:
 
-- Imposm
-- Mapcache
-- MapServer
-- MBTiles   (ipv file system)
-- ??
+- Imposm (importeren OSM Planet data)
+- MapServer WMS
+- MapCache tiling server
+- Tiles op filesysteem
+- Styling via MapServer Basemaps: https://github.com/opengeogroep/basemaps
 
 GeoServer Toolchain
 -------------------
+
+Deze gaat uit van:
+
 - osm2pgsql
 - osmosis
 - GeoServer
@@ -83,6 +86,18 @@ Optimalisaties
 
 http://www.remote.org/frederik/tmp/ramm-osm2pgsql-sotm-2012.pdf    (gebruikt ook Hetzner!)
 
+
+And The Winner Is...
+====================
+
+Uiteindelijk hebben we gekozen voor de MapCache toolchain. De redenen zijn deels rationeel, deels tijdgebrek om de andere
+chains volledig uit te werken. De GeoServer toolchain heeft als nadelen: Java (voor sommigen), beperking en
+verbosity SLDs. De Mapnik Toolchain was op zich aardig, er waren wat issues met MBTiles in andere projectie en
+bleek bovendien redelijk traag t.o.v. filestore, alhoewel natuurlijk een filestore uitstekend gebruikt kan worden.
+De MapCache toolchain was gewoon ook het beste uitgewerkt. Styling via MapServer bleek minder een issue dan
+gedacht vanwege de beschikbaarheid van MS basemap styles: https://github.com/opengeogroep/basemaps.
+Ook zijn een aantal componenten in deze MapCache toolchain goed te integreren/automatiseren, bijv. reseeding
+gedreven door OGR sources. De integratie met Apache is ook aantrekkelijk.
 
 Data
 ====
