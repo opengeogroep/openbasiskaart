@@ -27,6 +27,9 @@ body {
     font-size: 16px;
     font-weight: bold;
     text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+    background-image: url(../img/ogg-logo-50x50.png); 
+    background-repeat: no-repeat ; 
+    background-position: 24px 9px;
 }
 
 .navbar .nav > li > a {
