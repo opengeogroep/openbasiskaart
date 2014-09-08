@@ -28,11 +28,11 @@ Services: zowel TMS als WMTS, evt WMS-C. WMS heeft niet primair de focus, wel wo
 
 Actualiteit: incrementele updates vanuit main OSM DB
 
-Visualisaties: meerdere, gemmakkelijk uitbreidbaar
+Visualisaties: meerdere, gemakkelijk uitbreidbaar
 
 URL: http://openbasiskaart.nl
 
-Projekties: Voor de eerste twee varianten alleen RD, voor de derde variant wordt gewerkt aan ondersteuning van de
+Projecties: Voor de eerste twee varianten alleen RD, voor de derde variant wordt gewerkt aan ondersteuning van de
 de service standaarden voor WMS zoals genoemd op http://www.geonovum.nl/geostandaarden/services/destandaarden
 
 Kaartlagen: voorlopig OSM, later eventueel ook Top10NL en waar mogelijk versterkt met de basisregistraties zoals BAG en BRT

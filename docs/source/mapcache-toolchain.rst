@@ -58,10 +58,10 @@ these can simply be installed via the ubuntu package manager. ::
 	createdb -E UTF8 -O osm gis -T postgis2_template
 
 	# Zorg voor data schema, om postgis dingen te scheiden
-	psql osm
+	psql gis
 	create schema data authorization osm;
 	alter database osm set search_path = data, public
-	grant alll on spatial_ref_sys to public;
+	grant all on spatial_ref_sys to public;
 
     exit
 
