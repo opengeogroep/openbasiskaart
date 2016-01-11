@@ -20,7 +20,6 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="bootstrap/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="bootstrap/ico/apple-touch-icon-57-precomposed.png">
     <link rel="shortcut icon" href="img/ico/favicon.png">
-    
     <style>    
         #github-banner {
             float: right;
@@ -141,11 +140,24 @@
         <div class="featurette">
             <img class="featurette-image pull-right" src="img/examples/omleiding.jpg">
 
-            <h2 class="featurette-heading">Maandelijkse updates, <span class="muted">iedere maand een nieuwe kaart.</span>
+            <h2 class="featurette-heading">De OpenStreetMap achtergrondkaart <small>in het Rijksdriehoekstelsel</small>
             </h2>
-
-            <p class="lead">Wegen die niet meer bestaan, nieuwe wegen die ontbreken, plaatsnamen die niet kloppen? Het is de frustratie van menig kaartgebruiker. Wij doen hier iets aan; op dit moment wordt de Openbasiskaart iedere maand voorzien van "verse" <a href="http://www.openstreetmap.org">OpenStreetMap</a> data. Maar voor ons is dat niet genoeg. Op dit moment realiseren wij "near real-time" updates. Dat betekent dat de kaart <b>elke 5 minuten</b> wordt geactualiseerd! En klopt er toch iets niet, dan is dat een kwestie van aanpassen in OpenStreetMap en 5 minuten later zie je het terug op de Openbasiskaart. Handig toch?</p>
-
+            <h3 id="laatst"></h3>
+            <p class="lead">
+              De Openbasiskaart biedt een rustige kaart met gegevens afkomstig van <a href="http://www.openstreetmap.nl">OpenStreetMap</a>
+              in het Rijksdriehoestelsel (Cartesisch coördinatenstelsel in meters). De Openbasiskaart is erg geschikt om uw eigen kaartlagen
+              op weer te geven.
+              De gegevens worden regelmatig geupdate.
+            </p>
+            <p>
+              Op dit moment gebruiken wij <a href="http://www.imposm.org">Imposm 2</a> om gegevens in een 
+              <a href="http://www.postgis.org/">PostGIS</a> database te laden en <a href="http://www.mapserver.org"/>MapServer</a>
+              om de kaart te renderen en <a href="http://mapserver.org/mapcache/">MapCache</a> om dit als tiles aan te bieden.
+            </p>
+            <p>
+              Wijzigingen aan OpenStreetMap worden pas na een update zichtbaar op de Openbasiskaart. Er wordt gewerkt aan Imposm
+              versie 3 om snellere updates mogelijk te maken, momenteel is dit nog niet beschikbaar!
+            </p>
         </div>
         <hr class="featurette-divider">
         <div class="featurette">
@@ -214,9 +226,16 @@
             </table></p>
         </div>
         <hr class="featurette-divider">
+          <div class="featurette">
+            <h2 class="featurette-heading">Beta-test: hoge resolutie tiles voor retina schermen</h2>
+            <p>
+              Telefoon, tablet of laptop met een scherm met hoge resolutie? Probeer eens deze <a href="hq.html" target="_blank">demo</a>.
+            </p>
+          </div>
+        <hr class="featurette-divider">
         <div class="featurette">
         <footer>
-            <p>&copy; 2014 De Openbasiskaart is een product van de <a href="http://www.opengeogroep.nl">OpenGeoGroep</a> &middot; <!--<a href="#">Privacy</a> &middot; <a href="#">Voorwaarden</a>--></p>
+            <p>&copy; 2016 De Openbasiskaart is een product van de <a href="http://www.opengeogroep.nl">OpenGeoGroep</a> &middot; <!--<a href="#">Privacy</a> &middot; <a href="#">Voorwaarden</a>--></p>
         </footer>
         </div>
 
@@ -225,12 +244,31 @@
     <!-- /.container -->
     <script src="js/jquery-1.10.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/moment-with-locales.js"></script>
     <script>
         !function ($) {
             $(function () {
                 $('#myCarousel').carousel();
             });
         }(window.jQuery);
+        var lm;
+        $(document).ready(function() {
+            $.ajax("http://www.openbasiskaart.nl/mapcache/tms/1.0.0/osm@rd/0/0/0.png", {
+                cache: false,
+                method: "HEAD"
+            })
+            .done(function(data, textStatus, jqXHR) {
+                var lmh = jqXHR.getResponseHeader("Last-Modified");
+                lm = moment.utc(lmh, [
+                  'ddd, DD MMM YYYY HH:mm:ss [GMT]',
+                  'dddd, DD-MMM-YY HH:mm:ss [GMT]',
+                  'ddd MMM D HH:mm:ss YYYY'                
+                ]).locale("nl").local();
+                $("#laatst").text("Laatste update: " + lm.format("LLLL") + " (" + lm.fromNow() + ")");
+//                moment.locale("nl");
+//                console.log(lmh  + ", " + );
+            });
+        });
     </script>
     <script src="js/holder.js"></script>
 </div>
