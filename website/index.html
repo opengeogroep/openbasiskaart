@@ -60,7 +60,7 @@
                     <div class="nav-collapse collapse">
                         <ul class="nav">
                             <li><a href="#home">Home</a></li>
-                            <li><a href="http://www.openbasiskaart.nl/leaflet/">Kaart</a></li>
+                            <li><a href="/leaflet/">Kaart</a></li>
                             <li><a href="#services">Services</a></li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -200,25 +200,25 @@
               <tbody>
                 <tr>
                   <td>1</td>
-                  <td><a href="http://www.openbasiskaart.nl/mapcache/demo/tms">tms (demo)</a></td>
+                  <td><a href="/mapcache/demo/tms">tms (demo)</a></td>
                   <td>Tiled Map Service<br/>
                   <ul><li>
-<a href="http://www.openbasiskaart.nl/mapcache/tms/1.0.0/osm@rd">Basiskaart</a></li>
-<li><a href="http://www.openbasiskaart.nl/mapcache/tms/1.0.0/osm-nb@rd">Basiskaart zonder gebouwen</a></li>
+<a href="/mapcache/tms/1.0.0/osm@rd">Basiskaart</a></li>
+<li><a href="/mapcache/tms/1.0.0/osm-nb@rd">Basiskaart zonder gebouwen</a></li>
 </ul>
 </td>
                   <td>EPSG:28992</td>
                 </tr>
                 <tr>
                   <td>2</td>
-                  <td><a href="http://www.openbasiskaart.nl/mapcache/demo/wmts">wmts (demo)</a></td>
-                  <td>Web Map Tile Service <a href="http://www.openbasiskaart.nl/mapcache/wmts/?SERVICE=WMTS&REQUEST=GetCapabilities&VERSION=1.0.0">Capabilities</a></td>
+                  <td><a href="/mapcache/demo/wmts">wmts (demo)</a></td>
+                  <td>Web Map Tile Service <a href="/mapcache/wmts/?SERVICE=WMTS&REQUEST=GetCapabilities&VERSION=1.0.0">Capabilities</a></td>
                   <td>EPSG:28992</td>
                 </tr>
                 <tr>
                   <td>3</td>
-                  <td><a href="http://www.openbasiskaart.nl/mapcache/demo/wms">wms (demo)</a></td>
-                  <td>Web Map Service <a href="http://www.openbasiskaart.nl/mapcache/?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities">Capabilities</a></td>
+                  <td><a href="/mapcache/demo/wms">wms (demo)</a></td>
+                  <td>Web Map Service <a href="/mapcache/?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities">Capabilities</a></td>
                   <td>EPSG:28992</td>
                 </tr>
               </tbody>
@@ -253,7 +253,7 @@
         }(window.jQuery);
         var lm;
         $(document).ready(function() {
-            $.ajax("http://www.openbasiskaart.nl/mapcache/tms/1.0.0/osm@rd/0/0/0.png", {
+            $.ajax("/mapcache/tms/1.0.0/osm@rd/0/0/0.png", {
                 cache: false,
                 method: "HEAD"
             })
