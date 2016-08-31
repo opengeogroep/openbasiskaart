@@ -76,7 +76,7 @@ cd $PBF_DIR
 rm *.cache 2>/dev/null
 set -e
 echo Uitvoeren Imposm...
-imposm --quiet --table-prefix=osm_import_ -d osm --proj=EPSG:28992 --limit-to=imposm_limit.shp -c 4 --read --write --optimize $PBF >/dev/null 
+imposm --quiet --table-prefix=osm_import_ -d osm --proj=EPSG:28992 --limit-to=$BASEPATH/imposm/imposm_limit.shp -c 4 --read --write --optimize $PBF >/dev/null 
 echo Deployen nieuwe gegevens...
 $BASEPATH/deploy.sh
 
