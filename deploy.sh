@@ -10,13 +10,13 @@ echo Creating generalized waterways...
 PGPASSWORD=osm  psql -h localhost -d osm -U osm -c 'CREATE TABLE osm_new_waterways_gen0 AS SELECT id, osm_id, name, type, st_simplifypreservetopology(geometry, 200::double precision) AS geometry FROM osm_new_waterways;'
 PGPASSWORD=osm  psql -h localhost -d osm -U osm -c 'CREATE TABLE osm_new_waterways_gen1 AS SELECT id, osm_id, name, type, st_simplifypreservetopology(geometry, 50::double precision) AS geometry FROM osm_new_waterways;'
 echo Moving old tilesets to backup...
-for file in *; do [ -d "$file"] && mv "$file" "$file.bak"; done
+for file in *; do [ -d "$file" ] && mv "$file" "$file.bak"; done
 cd ..
 echo Seeding tileset osm...
-su www-data -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 0,9 -n 16" >/dev/null
+su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 0,9 -n 16" >/dev/null
 echo Seeding tileset osm-nb...
-su www-data -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-nb -g rd -z 0,8 -n 16" >/dev/null
+su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-nb -g rd -z 0,8 -n 16" >/dev/null
 echo Seeding tileset osm-hq...
-su www-data -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-hq -g rd-hq -z 0,8 -n 16" >/dev/null
+su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-hq -g rd-hq -z 0,8 -n 16" >/dev/null
 
 
