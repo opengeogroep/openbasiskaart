@@ -1,0 +1,244 @@
+MAP
+FONTSET "fonts.lst"
+IMAGETYPE png
+MAXSIZE 4000
+SIZE 800 800
+#EXTENT 90000 6340000 900000 7200000 
+EXTENT -50000 260000 306000 665000
+UNITS meters
+IMAGECOLOR "#B2E9FF"
+WEB
+   METADATA
+      "ows_enable_request" "*"
+      "wms_srs" "EPSG:28992 EPSG:4326 EPSG:900913"
+      "labelcache_map_edge_buffer" "-10"
+      "wms_title" "Hectormeterborden (NWB wegen)"
+   END
+END
+OUTPUTFORMAT
+  NAME png
+  TRANSPARENT ON
+  DRIVER AGG/PNG
+  MIMETYPE "image/png"
+  IMAGEMODE RGBA
+  EXTENSION "png"
+END
+CONFIG "MS_ERRORFILE" "stderr"
+PROJECTION
+   "init=epsg:28992"
+END
+
+symbol
+  name 'bordje'
+  type vector
+  filled true
+  points
+   0 0
+   0 1
+   1.2 1
+   1.2 0
+   0 0
+  end
+end
+symbol
+  name 'bordje_breed'
+  type vector
+  filled true
+  points
+   0 0
+   0 1
+   1.7 1
+   1.7 0
+   0 0
+  end
+end
+
+DEBUG 5
+
+  LAYER
+    TYPE POINT
+    CONNECTIONTYPE postgis
+    CONNECTION "host=localhost dbname=nwb user=osm password=osm port=5432"
+    DATA "geom from (select * from hmb_10k) as foo using unique gid using srid=28992"
+    STATUS ON
+    GROUP "nwb"
+    NAME "weg_hectometers_10k"
+    MINSCALEDENOM 25000
+    MAXSCALEDENOM 81252 #afgestemd met de lcms.map; roads niveau 12
+    PROCESSING "APPROXIMATION_SCALE=full"
+    PROJECTION
+      "init=epsg:28992"
+    END
+    include "bordje.inc"
+  END
+  
+  LAYER
+    TYPE POINT
+    DATA "hmb_1k.shp"
+    CONNECTIONTYPE postgis
+    CONNECTION "host=localhost dbname=nwb user=osm password=osm port=5432"
+    DATA "geom from (select * from hmb_1k) as foo using unique gid using srid=28992"
+    STATUS ON
+    GROUP "nwb"
+    DEBUG 1
+    NAME "weg_hectometers_1k"
+    MINSCALEDENOM 7000
+    MAXSCALEDENOM 25000
+    PROCESSING "APPROXIMATION_SCALE=full"
+    PROJECTION
+      "init=epsg:28992"
+    END
+    include "bordje.inc"
+  END
+
+  LAYER
+    TYPE POINT
+    CONNECTIONTYPE postgis
+    CONNECTION "host=localhost dbname=nwb user=osm password=osm port=5432"
+    DATA "geom from (select * from hmb_500m) as foo using unique gid using srid=28992"
+    STATUS ON
+    GROUP "nwb"
+    DEBUG 1
+    NAME "weg_hectometers_500m"
+    MINSCALEDENOM 2000
+    MAXSCALEDENOM 7000
+    PROCESSING "APPROXIMATION_SCALE=full"
+    PROJECTION
+      "init=epsg:28992"
+    END
+    include "bordje.inc"
+  END
+  
+  LAYER
+    TYPE POINT
+    DATA "hmb_200m.shp"
+    CONNECTIONTYPE postgis
+    CONNECTION "host=localhost dbname=nwb user=osm password=osm port=5432"
+    DATA "geom from (select * from hmb_200m) as foo using unique gid using srid=28992"
+    STATUS ON
+    GROUP "nwb"
+    DEBUG 5
+    NAME "weg_hectometers_200m"
+    MINSCALEDENOM 800
+    MAXSCALEDENOM 2000
+
+    PROCESSING "APPROXIMATION_SCALE=full"
+    PROJECTION
+      "init=epsg:28992"
+    END
+    include "bordje.inc"
+  END
+
+  LAYER
+    TYPE POINT
+    CONNECTIONTYPE postgis
+    CONNECTION "host=localhost dbname=nwb user=osm password=osm port=5432"
+    DATA "geom from (select * from hectometerborden) as foo using unique gid using srid=28992"
+    STATUS ON
+    GROUP "nwb"
+    DEBUG 1
+    NAME "weg_hectometers"
+    MAXSCALEDENOM 800
+    PROCESSING "APPROXIMATION_SCALE=full"
+    PROJECTION
+      "init=epsg:28992"
+    END
+    CLASS
+      STYLE
+          COLOR 8 135 68
+          SYMBOL 'bordje_breed'
+          color 8 135 68
+          outlinecolor 255 255 255
+          size 30
+      END
+      LABEL
+        EXPRESSION ('[hectometer]' ~ '.')
+        TEXT '[hectometer]' 
+        ALIGN right
+        COLOR  255 255 255
+        FONT "anwb-uu"
+        TYPE truetype
+        SIZE 8
+        OFFSET -9 7
+        POSITION cc
+        PARTIALS true
+        FORCE true
+      END
+      LABEL
+        EXPRESSION (('[wegnummer]' ~ '.') AND ('[wegnummer]' ~* 'A'))
+        TEXT '[wegnummer]'
+        ALIGN left   
+        COLOR  255 255 255
+        FONT "anwb-uu"
+        TYPE truetype
+        SIZE 8
+        OFFSET -10 -6
+        POSITION cc 
+        PARTIALS true
+        FORCE true
+        #BUFFER 12        
+        STYLE
+          GEOMTRANSFORM 'labelpoly'
+          OUTLINECOLOR 255 255 255
+          WIDTH 2
+        END
+        STYLE
+          GEOMTRANSFORM 'labelpoly'
+          COLOR 255 0 0
+          WIDTH 1
+        END
+      END
+      LABEL
+        EXPRESSION (('[wegnummer]' ~ '.') AND ('[wegnummer]' ~* 'N'))
+        TEXT '[wegnummer]'
+        ALIGN right   
+        COLOR  0 0 0
+        FONT "anwb-uu"
+        TYPE truetype
+        SIZE 8
+        OFFSET -7 -6
+        POSITION cc 
+        PARTIALS true
+        FORCE true
+        #BUFFER 12        
+        STYLE
+          GEOMTRANSFORM 'labelpoly'
+          COLOR 255 186 0
+          WIDTH 3
+        END
+      END      
+      LABEL
+        EXPRESSION ('[positie]' ~ '.')
+        TEXT '[positie]' 
+        COLOR  255 255 255
+        FONT "anwb-uu"
+        TYPE truetype
+        SIZE 9
+        OFFSET 16 -8
+        POSITION cc
+        PARTIALS true
+        force true
+      END      
+      LABEL
+        EXPRESSION (('[wegnummer]' ~ '.') AND ('[letter]' ~ '.'))
+        TEXT '[letter]'
+        ALIGN right   
+        COLOR  0 0 0
+        FONT "anwb-uu"
+        TYPE truetype
+        SIZE 9
+        OFFSET 15 5
+        POSITION cc 
+        PARTIALS true
+        FORCE true
+        #BUFFER 12        
+        STYLE
+          GEOMTRANSFORM 'labelpoly'
+          COLOR 255 186 0
+          WIDTH 3
+        END
+      END   
+    END
+  END
+
+END

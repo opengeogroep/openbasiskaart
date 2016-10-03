@@ -51,3 +51,6 @@ make STYLE=nb
 
 # Doe nu stappen in update en deploy script, behalve imposm --deploy-production-tables
 
+# Link directory met extra mapfiles, zie maps/*.md voor extra instructies
+
+ln -s $DIR/maps /opt
