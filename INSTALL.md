@@ -27,7 +27,8 @@ mkdir /mnt/data/mapcache
 ln -s $DIR/mapcache.xml /mnt/data/mapcache
 chown www-data:www-data /mnt/data/mapcache
 
-# ServerAlias werkt niet, 000-default moet gedisabled worden
+# ServerAlias is globaal ingesteld in openbasiskaart.conf (om warning bij herstart te vermijden), 
+# daarom moet 000-default moet gedisabled worden
 a2dissite 000-default
 a2ensite openbasiskaart openbasiskaart-ssl
 a2enmod headers cgid ssl
@@ -50,3 +51,6 @@ make STYLE=nb
 
 # Doe nu stappen in update en deploy script, behalve imposm --deploy-production-tables
 
+# Link directory met extra mapfiles, zie maps/*.md voor extra instructies
+
+ln -s $DIR/maps /opt
