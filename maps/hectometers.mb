@@ -1,0 +1,250 @@
+'Include of standard files
+Include "mapbasic.def"
+Include "menu.def"
+Include "icons.def"
+Declare Sub Main
+
+Global sCOORDINATESYSTEM as String
+
+'haal laatste data op van https://www.rijkswaterstaat.nl/apps/geoservices/geodata/dmc/nwb-wegen/geogegevens/shapefile/Nederland_totaal/
+'uitpakken en hectometer.mbx plaatsen in datum folder en draaien
+
+
+'***************************************
+Sub Main 'Hoofdmenu
+'***************************************
+OnError Goto ErrorHandling
+
+close all interactive
+
+'goto overslaan
+Register Table ApplicationDirectory$()+"Hectopunten\Hectopunten.shp"  TYPE SHAPEFILE Charset "WindowsLatin1" CoordSys Earth Projection 20, 109, "m", 5.387638889, 52.156160556, 0.9999079, 155000, 463000 Bounds (-99845000, -99537000) (100155000, 100463000) PersistentCache Off Symbol (35,0,12)  
+Into ApplicationDirectory$()+"\Hectopunten\Hectopunten.TAB"
+
+Register Table ApplicationDirectory$()+"Wegvakken\Wegvakken.shp"  TYPE SHAPEFILE Charset "WindowsLatin1" CoordSys Earth Projection 20, 109, "m", 5.387638889, 52.156160556, 0.9999079, 155000, 463000 Bounds (-99845000, -99537000) (100155000, 100463000) PersistentCache Off Symbol (35,0,12)  
+Into ApplicationDirectory$()+"\Wegvakken\Wegvakken.TAB"
+
+Open Table ApplicationDirectory$()+"Hectopunten\Hectopunten.TAB"
+Open Table ApplicationDirectory$()+"Wegvakken\Wegvakken.TAB"
+Commit Table Hectopunten As ApplicationDirectory$()+"Hectopunten\Hectopunten_MI.TAB" TYPE NATIVE Charset "WindowsLatin1" 
+Commit Table Wegvakken As ApplicationDirectory$()+"Wegvakken\Wegvakken_MI.TAB" TYPE NATIVE Charset "WindowsLatin1" 
+Close Table Hectopunten
+Close Table Wegvakken
+
+overslaan:
+Open Table ApplicationDirectory$()+"Hectopunten\Hectopunten_MI.TAB" as Hectopunten
+Open Table ApplicationDirectory$()+"Wegvakken\Wegvakken_MI.TAB" as Wegvakken
+
+Select * from Wegvakken where Wegnummer<>"" and Left$(Wegnummer,1) <> "A" and Left$(Wegnummer,1) <> "N" and (Routeltr2="N" or Routeltr2="A") into WegvakkenWegnummer
+Update WegvakkenWegnummer Set Routenr4 = Wegnummer DropIndex Auto
+
+Select * from WegvakkenWegnummer where Routenr2=Routenr4 into WegvakkenWegnummerTweede
+Update WegvakkenWegnummerTweede Set Routenr = Routenr2 DropIndex Auto
+Commit table Wegvakken
+
+
+'set utm32n
+Set CoordSys Earth Projection 8, 104, "m", 9, 0, 0.9996, 500000, 0 Bounds (-7745844.29597, -9997964.94324) (8745844.29597, 9997964.94324)
+
+	sCOORDINATESYSTEM = "Set "+EPSGToCoordSysString$("EPSG:32632")
+	Run Command(sCOORDINATESYSTEM)	
+	
+	
+
+
+Select Wegvakken.Routeltr+Wegvakken.Routenr+Wegvakken.Pos_tv_wol+" "+Format$((Hectopunten.Hectomtrng/10), "0.#")+Dvk_Letter "Combined", Wegvakken.Routeltr+Wegvakken.Routenr "Route", Hectopunten.Hectomtrng/10 "Hecto", Wegvakken.Routeltr, Wegvakken.Routenr, Wegvakken.Pos_tv_wol, Hectopunten.Hectomtrng, Dvk_Letter from Hectopunten, Wegvakken 
+where Hectopunten.Wvk_id=Wegvakken.Wvk_id and Wegvakken.Routeltr <> "" and Wegvakken.Pos_tv_wol="L"
+into HectometerL
+
+Commit Table HectometerL As ApplicationDirectory$()+"Hectometer_temp.TAB" TYPE NATIVE Charset "WindowsLatin1" CoordSys Earth Projection 8, 104, "m", 9, 0, 0.9996, 500000, 0 Bounds (-7745844.29597, -9997964.94324) (8745844.29597, 9997964.94324)
+Open table ApplicationDirectory$()+"Hectometer_temp.TAB" as Hectometer
+
+
+
+Select Wegvakken.Routeltr+Wegvakken.Routenr+Wegvakken.Pos_tv_wol+" "+Format$((Hectopunten.Hectomtrng/10), "0.#")+Dvk_Letter "Combined", Wegvakken.Routeltr+Wegvakken.Routenr "Route", Hectopunten.Hectomtrng/10 "Hecto", Wegvakken.Routeltr, Wegvakken.Routenr, Wegvakken.Pos_tv_wol, Hectopunten.Hectomtrng, Dvk_Letter  from Hectopunten, Wegvakken 
+where Hectopunten.Wvk_id=Wegvakken.Wvk_id and Wegvakken.Routeltr <> "" and Wegvakken.Pos_tv_wol="R"
+into HectometerR
+
+Insert Into Hectometer Select * From HectometerR
+
+
+Select Wegvakken.Routeltr+Wegvakken.Routenr+" "+Format$((Hectopunten.Hectomtrng/10), "0.#")+Dvk_Letter "Combined", Wegvakken.Routeltr+Wegvakken.Routenr "Route", Hectopunten.Hectomtrng/10 "Hecto", Wegvakken.Routeltr, Wegvakken.Routenr, Wegvakken.Pos_tv_wol, Hectopunten.Hectomtrng, Dvk_Letter  from Hectopunten, Wegvakken 
+where Hectopunten.Wvk_id=Wegvakken.Wvk_id and Wegvakken.Routeltr <> "" and Wegvakken.Pos_tv_wol<>"R" and Wegvakken.Pos_tv_wol<>"L"
+into HectometerOther
+
+Insert Into Hectometer Select * From HectometerOther
+
+commit table Hectometer
+
+
+
+'Overige N
+Select wegnummer+Wegvakken.Pos_tv_wol+" "+Format$((Hectopunten.Hectomtrng/10), "0.#")+Dvk_Letter "Combined", wegnummer "Route", Hectopunten.Hectomtrng/10 "Hecto", Left$(Wegnummer,1) "Routeltr", Mid$(Wegnummer,2,3) "Routenr", Wegvakken.Pos_tv_wol, Hectopunten.Hectomtrng, Dvk_Letter  
+from Hectopunten, Wegvakken where Hectopunten.Wvk_id=Wegvakken.Wvk_id and Left$(Wegnummer,1) = "N" and Wegvakken.Wegnummer <> "" and Wegvakken.Routeltr = "" and Wegvakken.Pos_tv_wol="L" 
+into HectometerLextraN
+Insert Into Hectometer Select * From HectometerLextraN
+
+
+Select wegnummer+Wegvakken.Pos_tv_wol+" "+Format$((Hectopunten.Hectomtrng/10), "0.#")+Dvk_Letter "Combined", wegnummer "Route", Hectopunten.Hectomtrng/10 "Hecto" , Left$(Wegnummer,1) "Routeltr", Mid$(Wegnummer,2,3) "Routenr", Wegvakken.Pos_tv_wol, Hectopunten.Hectomtrng, Dvk_Letter   
+from Hectopunten, Wegvakken where Hectopunten.Wvk_id=Wegvakken.Wvk_id and Left$(Wegnummer,1) = "N" and Wegvakken.Wegnummer <> "" and Wegvakken.Routeltr = "" and Wegvakken.Pos_tv_wol="R" 
+into HectometerRextraN
+
+Select wegnummer+" "+Format$((Hectopunten.Hectomtrng/10), "0.#")+Dvk_Letter "Combined", wegnummer "Route", Hectopunten.Hectomtrng/10 "Hecto"  , Left$(Wegnummer,1) "Routeltr", Mid$(Wegnummer,2,3) "Routenr", Wegvakken.Pos_tv_wol, Hectopunten.Hectomtrng, Dvk_Letter  
+from Hectopunten, Wegvakken where Hectopunten.Wvk_id=Wegvakken.Wvk_id and Left$(Wegnummer,1) = "N" and Wegvakken.Wegnummer <> "" and Wegvakken.Routeltr = "" and Wegvakken.Pos_tv_wol<>"R" and Wegvakken.Pos_tv_wol<>"L" 
+into HectometerOtherextraN
+
+
+Insert Into Hectometer Select * From HectometerRextraN
+Insert Into Hectometer Select * From HectometerOtherextraN
+commit table Hectometer
+
+'Overige A
+Select wegnummer+Wegvakken.Pos_tv_wol+" "+Format$((Hectopunten.Hectomtrng/10), "0.#")+Dvk_Letter "Combined" , wegnummer "Route", Hectopunten.Hectomtrng/10 "Hecto" , Left$(Wegnummer,1) "Routeltr", Mid$(Wegnummer,2,3) "Routenr", Wegvakken.Pos_tv_wol, Hectopunten.Hectomtrng, Dvk_Letter  
+from Hectopunten, Wegvakken where Hectopunten.Wvk_id=Wegvakken.Wvk_id and Left$(Wegnummer,1) = "A" and Wegvakken.Wegnummer <> "" and Wegvakken.Routeltr = "" and Wegvakken.Pos_tv_wol="L" 
+into HectometerLextraA
+
+Select wegnummer+Wegvakken.Pos_tv_wol+" "+Format$((Hectopunten.Hectomtrng/10), "0.#")+Dvk_Letter "Combined" , wegnummer "Route", Hectopunten.Hectomtrng/10 "Hecto" , Left$(Wegnummer,1) "Routeltr", Mid$(Wegnummer,2,3) "Routenr", Wegvakken.Pos_tv_wol, Hectopunten.Hectomtrng, Dvk_Letter  
+from Hectopunten, Wegvakken where Hectopunten.Wvk_id=Wegvakken.Wvk_id and Left$(Wegnummer,1) = "A" and Wegvakken.Wegnummer <> "" and Wegvakken.Routeltr = "" and Wegvakken.Pos_tv_wol="R" 
+into HectometerRextraA
+
+Select wegnummer+" "+Format$((Hectopunten.Hectomtrng/10), "0.#")+Dvk_Letter "Combined" , wegnummer "Route", Hectopunten.Hectomtrng/10 "Hecto" , Left$(Wegnummer,1) "Routeltr", Mid$(Wegnummer,2,3) "Routenr", Wegvakken.Pos_tv_wol, Hectopunten.Hectomtrng, Dvk_Letter  
+from Hectopunten, Wegvakken where Hectopunten.Wvk_id=Wegvakken.Wvk_id and Left$(Wegnummer,1) = "A" and Wegvakken.Wegnummer <> "" and Wegvakken.Routeltr = "" and Wegvakken.Pos_tv_wol<>"R" and Wegvakken.Pos_tv_wol<>"L" 
+into HectometerOtherextraA
+
+Insert Into Hectometer Select * From HectometerLextraA
+Insert Into Hectometer Select * From HectometerRextraA
+Insert Into Hectometer Select * From HectometerOtherextraA
+commit table Hectometer
+
+
+
+'Max en Min van hectopunten
+Select Left$(Route,4) "Route4", Route, Left$(Route,1) "Letter", Mid$(Route,2,3) "Nummer", Min(Hecto),Max(Hecto), fix(Hecto) "group2" from Hectometer group by col1, group2 into hectopuntenMaxMin
+Commit Table hectopuntenMaxMin As ApplicationDirectory$()+"hectopuntenMaxMin.TAB" TYPE NATIVE Charset "WindowsLatin1" 
+Close table hectopuntenMaxMin
+Open table ApplicationDirectory$()+"hectopuntenMaxMin.TAB" as hectopuntenMaxMin
+Alter Table "hectopuntenMaxMin" ( modify Nummer Decimal(4,0) ) Interactive
+Commit Table hectopuntenMaxMin
+
+
+
+'Zonder wegnummer met letter
+Select * from Hectopunten, Wegvakken 
+where Hectopunten.Wvk_id=Wegvakken.Wvk_id  and Wegvakken.Wegnummer <> "" and Wegvakken.Routeltr = "" and Left$(Wegnummer,1) <> "A" and Left$(Wegnummer,1) <> "N" 
+into HectopuntenOnlyWegnummer
+
+Commit Table HectopuntenOnlyWegnummer As ApplicationDirectory$()+"HectopuntenOnlyWegnummer.TAB" TYPE NATIVE Charset "WindowsLatin1" 
+Close table HectopuntenOnlyWegnummer
+Open table ApplicationDirectory$()+"HectopuntenOnlyWegnummer.TAB" as HectopuntenOnlyWegnummer
+
+Update HectopuntenOnlyWegnummer Set Routenr = Wegnummer DropIndex Auto
+Commit Table HectopuntenOnlyWegnummer
+
+Select * from HectopuntenOnlyWegnummer, hectopuntenMaxMin 
+where HectopuntenOnlyWegnummer.Routenr=hectopuntenMaxMin.Nummer and HectopuntenOnlyWegnummer.Hectomtrng/10 >= hectopuntenMaxMin._COL5 and HectopuntenOnlyWegnummer.Hectomtrng/10 <= hectopuntenMaxMin._COL6 and hectopuntenMaxMin.Letter = "A" 
+into HectopuntenOnlyWegnummerA
+Update HectopuntenOnlyWegnummerA Set Routeltr = "A" DropIndex Auto
+Commit Table HectopuntenOnlyWegnummer
+
+
+
+
+
+Select * from HectopuntenOnlyWegnummer, hectopuntenMaxMin 
+where HectopuntenOnlyWegnummer.Routenr=hectopuntenMaxMin.Nummer and HectopuntenOnlyWegnummer.Hectomtrng/10 >= hectopuntenMaxMin._COL5 and HectopuntenOnlyWegnummer.Hectomtrng/10 <= hectopuntenMaxMin._COL6 and hectopuntenMaxMin.Letter = "N" 
+into HectopuntenOnlyWegnummerN
+Update HectopuntenOnlyWegnummerA Set Routeltr = "N" DropIndex Auto
+
+Select * from HectopuntenOnlyWegnummer where Routeltr="" into HectopuntenOnlyWegnummerLeeg
+Update HectopuntenOnlyWegnummerLeeg Set Routeltr = "N" DropIndex Auto
+Commit Table HectopuntenOnlyWegnummer
+
+'insert N
+Select Routeltr+Routenr+Pos_tv_wol+" "+Format$((Hectomtrng/10), "0.#")+Dvk_Letter "Combined", Routeltr+Routenr "Route", Hectomtrng/10 "Hecto" , Routeltr, Routenr, Pos_tv_wol, Hectomtrng, Dvk_Letter
+From HectopuntenOnlyWegnummer
+where Routeltr = "N" and Pos_tv_wol="L"
+Into HectopuntenOnlyWegnummerNselL
+
+Select Routeltr+Routenr+Pos_tv_wol+" "+Format$((Hectomtrng/10), "0.#")+Dvk_Letter "Combined", Routeltr+Routenr "Route", Hectomtrng/10 "Hecto"  , Routeltr, Routenr, Pos_tv_wol, Hectomtrng, Dvk_Letter
+From HectopuntenOnlyWegnummer
+where Routeltr = "N" and Pos_tv_wol="R"
+Into HectopuntenOnlyWegnummerNselR
+
+Select Routeltr+Routenr+" "+Format$((Hectomtrng/10), "0.#")+Dvk_Letter "Combined", Routeltr+Routenr "Route", Hectomtrng/10 "Hecto"  , Routeltr, Routenr, Pos_tv_wol, Hectomtrng, Dvk_Letter
+From HectopuntenOnlyWegnummer
+where Routeltr = "N" and Pos_tv_wol=""
+Into HectopuntenOnlyWegnummerNsel
+
+Insert Into Hectometer Select * From HectopuntenOnlyWegnummerNselL
+Insert Into Hectometer Select * From HectopuntenOnlyWegnummerNselR
+Insert Into Hectometer Select * From HectopuntenOnlyWegnummerNsel
+commit table Hectometer
+
+'insert A
+Select Routeltr+Routenr+Pos_tv_wol+" "+Format$((Hectomtrng/10), "0.#")+Dvk_Letter "Combined", Routeltr+Routenr "Route", Hectomtrng/10 "Hecto"  , Routeltr, Routenr, Pos_tv_wol, Hectomtrng, Dvk_Letter
+From HectopuntenOnlyWegnummer
+where Routeltr = "A" and Pos_tv_wol="L"
+Into HectopuntenOnlyWegnummerAselL
+
+Select Routeltr+Routenr+Pos_tv_wol+" "+Format$((Hectomtrng/10), "0.#")+Dvk_Letter "Combined", Routeltr+Routenr "Route", Hectomtrng/10 "Hecto"  , Routeltr, Routenr, Pos_tv_wol, Hectomtrng, Dvk_Letter
+From HectopuntenOnlyWegnummer
+where Routeltr = "A" and Pos_tv_wol="R"
+Into HectopuntenOnlyWegnummerAselR
+
+Select Routeltr+Routenr+" "+Format$((Hectomtrng/10), "0.#")+Dvk_Letter "Combined", Routeltr+Routenr "Route", Hectomtrng/10 "Hecto"  , Routeltr, Routenr, Pos_tv_wol, Hectomtrng, Dvk_Letter
+From HectopuntenOnlyWegnummer
+where Routeltr = "A" and Pos_tv_wol=""
+Into HectopuntenOnlyWegnummerAsel
+
+Insert Into Hectometer Select * From HectopuntenOnlyWegnummerAselL
+Insert Into Hectometer Select * From HectopuntenOnlyWegnummerAselR
+Insert Into Hectometer Select * From HectopuntenOnlyWegnummerAsel
+commit table Hectometer
+
+
+
+
+'set utm32n
+Set CoordSys Earth Projection 8, 104, "m", 9, 0, 0.9996, 500000, 0 Bounds (-7745844.29597, -9997964.94324) (8745844.29597, 9997964.94324)
+
+sCOORDINATESYSTEM = "Set "+EPSGToCoordSysString$("EPSG:32632")
+Run Command(sCOORDINATESYSTEM)	
+	
+Select Combined, format$( CentroidX(obj), "#.##") "X",  format$( CentroidY(obj), "#.##") "Y" from Hectometer order by Combined into Hectometer_XY
+
+
+
+Commit Table Hectometer_XY As ApplicationDirectory$()+"Hectometer.TAB" Type ACCESS Database ApplicationDirectory$()+"Hectometer.mdb" Table "Hectometer"
+
+Kill ApplicationDirectory$()+"Hectometer.aid"
+Kill ApplicationDirectory$()+"Hectometer.ID"
+Kill ApplicationDirectory$()+"Hectometer.MAP"
+Kill ApplicationDirectory$()+"Hectometer.TAB"
+
+Set CoordSys Earth Projection 20, 109, "m", 5.387638889, 52.156160556, 0.9999079, 155000, 463000 Bounds (-99845000, -99537000) (100155000, 100463000)
+
+sCOORDINATESYSTEM = "Set "+EPSGToCoordSysString$("EPSG:28992")
+Run Command(sCOORDINATESYSTEM)	
+	
+Select Routeltr, Routenr, Pos_tv_wol, Hectomtrng, Dvk_letter, format$( CentroidX(obj), "#.##") "X",  format$( CentroidY(obj), "#.##") "Y" from Hectometer into Hectometer_XY_RD
+Export "Hectometer_XY_RD" Into ApplicationDirectory$()+"Hectometer_XY_RD.txt" Type "ASCII" Delimiter ";" CharSet "WindowsLatin1" Titles
+
+
+
+Drop table Hectometer
+Drop table HectopuntenOnlyWegnummer
+Drop Table hectopuntenMaxMin
+Drop Table Hectopunten
+Drop Table wegvakken
+
+note "Finished"
+exit sub
+
+
+Exit Sub
+'ERROR
+ErrorHandling:
+Print Err()+" > "+Error$( ) 
+Resume Next
+End Sub
+
