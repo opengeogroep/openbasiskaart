@@ -1,13 +1,12 @@
 create or replace view hectometerborden as
 select 
     h.gid,
-    case when wegbehsrt = 'R' then 'A' || wegnummer::int else wegnummer end as wegnummer,
-    trim(replace(to_char(h.hectomtrng / 10.0, '990.0'),'.',',')) as hectometer,
-    case rpe_code when 'L' then 'Li' when 'R' then 'Re' else null end as positie,
-    case hecto_lttr when '#' then null else hecto_lttr end as letter,
+    routeltr || routenr as wegnummer,
+    replace(trim(to_char(hectomtrng / 10.0, '990.0')),'.',',') as hectometer,
+    case pos_tv_wol when 'L' then 'Li' when 'R' then 'Re' else null end as positie,
+    dvk_letter as letter,
     h.geom
-from nwb20161001.hectopunten h
-left join nwb20161001.wegvakken w on (h.wvk_id = w.wvk_id);
+from nwb_201706.hectopunten h
 
 -- if not exists since PostgreSQL 9.5
 create table if not exists hmb_10k (gid serial, wegnummer varchar, hectometer varchar, geom geometry(Point,28992));
