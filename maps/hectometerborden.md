@@ -8,31 +8,20 @@ createdb nwb --owner=osm
 psql nwb -c 'create extension postgis;'
 ```
 
-# 1. Downloaden gegevens (maandelijks)
+# 1. Gegevens inladen (maandelijks)
 
-Download het laatste ZIP-bestand van:
+Importeer de hectopunten CSV van Falck en maak hier een shapefile van.
 
-http://www.rijkswaterstaat.nl/apps/geoservices/geodata/dmc/nwb-wegen/geogegevens/shapefile/Nederland_totaal/
-
-# 2. Uitpakken
-
-`unzip 01-10-2016.zip`
-
-# 3. Inladen in PostgreSQL
-
-Vervang hieronder de datum met die van het laatst gedownloadde NWB:
+Vervang hieronder de datum met die van de huidige maand:
 
 ```bash
-psql nwb -c "create schema nwb20161001 authorization osm;"
-(echo 'set session authorization osm;'; shp2pgsql -s 28992 -g geom -D -i -I -S -t 2D 01-10-2016/Hectopunten/Hectopunten.shp  nwb20161001.hectopunten) | psql nwb
-(echo 'set session authorization osm;'; shp2pgsql -s 28992 -g geom -D -i -I -S -t 2D 01-10-2016/Wegvakken/Wegvakken.shp  nwb20161001.wegvakken) | psql nwb
-psql nwb -c "create index idx_wegvakken_wvk_id ON nwb20161001.wegvakken (wvk_id);"
+psql nwb -c "create schema nwb201706 authorization osm;"
+(echo 'set session authorization osm;'; shp2pgsql -s 28992 -g geom -D -i -I -S -t 2D hectometerborden.shp nwb_201706.hectopunten) | psql nwb_falck
 ```
 
-# 4. Aanmaken view
+# 2. Aanmaken view
 
-Pas in `hectometerborden.sql` de schemanaam aan om te wijzen naar de net ingeladen NWB versie en voer deze uit. Drop nu het oude NWB
-schema na controleren of de mapfile goed werkt. Verwijder het ZIP bestand en uitgepakte bestanden.
+Pas in `hectometerborden.sql` de schemanaam aan om te wijzen naar de net ingeladen NWB versie en voer deze uit. Drop nu het oude NWB schema na controleren of de mapfile goed werkt. 
 
 ```bash
 (echo 'set session authorization osm;'; cat hectometerborden.sql) | psql nwb
