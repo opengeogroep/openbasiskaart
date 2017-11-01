@@ -25,5 +25,5 @@ psql nwb_falck -c "create schema nwb_$DATUM authorization osm;"
 Pas in `hectometerborden.sql` de schemanaam aan om te wijzen naar de net ingeladen NWB versie en voer deze uit. Drop nu het oude NWB schema na controleren of de mapfile goed werkt. 
 
 ```bash
-(echo 'set session authorization osm;'; cat hectometerborden.sql) | psql nwb
+(echo 'set session authorization osm;'; sed s/nwb_datum/nwb_$DATUM/ hectometerborden.sql) | psql nwb_falck
 ```
