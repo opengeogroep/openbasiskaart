@@ -6,7 +6,7 @@ select
     case pos_tv_wol when 'L' then 'Li' when 'R' then 'Re' else null end as positie,
     dvk_letter as letter,
     h.geom
-from nwb_datum.hectopunten h
+from nwb_datum.hectopunten h;
 
 -- if not exists since PostgreSQL 9.5
 create table if not exists hmb_10k (gid serial, wegnummer varchar, hectometer varchar, geom geometry(Point,28992));
