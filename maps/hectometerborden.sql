@@ -2,7 +2,7 @@ create or replace view hectometerborden as
 select 
     h.gid,
     routeltr || routenr as wegnummer,
-    replace(trim(to_char(hectomtrng / 10.0, '990.0')),'.',',') as hectometer,
+    replace(trim(to_char(hecto, '990.0')),'.',',') as hectometer,
     case pos_tv_wol when 'L' then 'Li' when 'R' then 'Re' else null end as positie,
     dvk_letter as letter,
     h.geom
