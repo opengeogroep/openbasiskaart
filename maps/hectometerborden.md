@@ -15,8 +15,9 @@ Importeer de hectopunten CSV van Falck en maak hier een shapefile van.
 Vervang hieronder de datum met die van de huidige maand:
 
 ```bash
-psql nwb -c "create schema nwb201706 authorization osm;"
-(echo 'set session authorization osm;'; shp2pgsql -s 28992 -g geom -D -i -I -S -t 2D hectometerborden.shp nwb_201706.hectopunten) | psql nwb_falck
+export DATUM=201710
+psql nwb_falck -c "create schema nwb$DATUM authorization osm;"
+(echo 'set session authorization osm;'; shp2pgsql -s 28992 -g geom -D -i -I -S -t 2D hectometerborden.shp nwb_$DATUM.hectopunten) | psql nwb_falck
 ```
 
 # 2. Aanmaken view
