@@ -58,7 +58,7 @@ DEBUG 5
   LAYER
     TYPE POINT
     CONNECTIONTYPE postgis
-    CONNECTION "host=localhost dbname=nwb user=osm password=osm port=5432"
+    CONNECTION "host=localhost dbname=nwb_falck user=osm password=osm port=5432"
     DATA "geom from (select * from hmb_10k) as foo using unique gid using srid=28992"
     STATUS ON
     GROUP "nwb"
@@ -76,7 +76,7 @@ DEBUG 5
     TYPE POINT
     DATA "hmb_1k.shp"
     CONNECTIONTYPE postgis
-    CONNECTION "host=localhost dbname=nwb user=osm password=osm port=5432"
+    CONNECTION "host=localhost dbname=nwb_falck user=osm password=osm port=5432"
     DATA "geom from (select * from hmb_1k) as foo using unique gid using srid=28992"
     STATUS ON
     GROUP "nwb"
@@ -94,7 +94,7 @@ DEBUG 5
   LAYER
     TYPE POINT
     CONNECTIONTYPE postgis
-    CONNECTION "host=localhost dbname=nwb user=osm password=osm port=5432"
+    CONNECTION "host=localhost dbname=nwb_falck user=osm password=osm port=5432"
     DATA "geom from (select * from hmb_500m) as foo using unique gid using srid=28992"
     STATUS ON
     GROUP "nwb"
@@ -113,7 +113,7 @@ DEBUG 5
     TYPE POINT
     DATA "hmb_200m.shp"
     CONNECTIONTYPE postgis
-    CONNECTION "host=localhost dbname=nwb user=osm password=osm port=5432"
+    CONNECTION "host=localhost dbname=nwb_falck user=osm password=osm port=5432"
     DATA "geom from (select * from hmb_200m) as foo using unique gid using srid=28992"
     STATUS ON
     GROUP "nwb"
@@ -132,7 +132,7 @@ DEBUG 5
   LAYER
     TYPE POINT
     CONNECTIONTYPE postgis
-    CONNECTION "host=localhost dbname=nwb user=osm password=osm port=5432"
+    CONNECTION "host=localhost dbname=nwb_falck user=osm password=osm port=5432"
     DATA "geom from (select * from hectometerborden) as foo using unique gid using srid=28992"
     STATUS ON
     GROUP "nwb"
