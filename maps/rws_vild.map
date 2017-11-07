@@ -1,0 +1,122 @@
+MAP
+FONTSET "fonts.lst"
+IMAGETYPE png
+MAXSIZE 4000
+SIZE 800 800
+EXTENT -50000 260000 306000 665000
+UNITS meters
+WEB
+   METADATA
+      "ows_enable_request" "*"
+      "wms_srs" "EPSG:28992 EPSG:4326 EPSG:900913"
+      "labelcache_map_edge_buffer" "-10"
+      "wms_title" "Rijkswaterstaat Verkeersinformatie Locatie Database"
+   END
+END
+OUTPUTFORMAT
+  NAME png
+  TRANSPARENT ON
+  DRIVER AGG/PNG
+  MIMETYPE "image/png"
+  IMAGEMODE RGBA
+  EXTENSION "png"
+END
+CONFIG "MS_ERRORFILE" "stderr"
+PROJECTION
+   "init=epsg:28992"
+END
+
+symbol
+  name 'afrit16'
+  type pixmap
+  image 'symbols/afrit16.png'
+end
+
+symbol
+  name 'afrit32'
+  type pixmap
+  image 'symbols/afrit16.png'
+end
+
+#DEBUG 5
+
+LAYER
+    NAME "afritnummers25k"
+    TYPE POINT
+    CONNECTIONTYPE postgis
+    CONNECTION "host=localhost dbname=rws_vild user=osm password=osm port=5432"
+    DATA "geom from (select p.gid, p.geom as geom, v.exit_nr as exit_nr, v.first_name as first_name from tmcpoint p join vild512a_v2 v on (v.loc_nr = p.loc_nr) where length(v.exit_nr) > 0) as foo using unique gid using srid=28992"
+    GROUP "afritnummers"
+#    MINSCALEDENOM 25000
+#    MAXSCALEDENOM 81252 #afgestemd met de lcms.map; roads niveau 12
+#    PROCESSING "APPROXIMATION_SCALE=full"
+    PROJECTION
+      "init=epsg:28992"
+    END
+    class
+        label
+            text '   [exit_nr]'
+            color 255 255 255
+            font "anwb-uu"
+            type truetype
+            size 12
+            position cr
+            partials true
+            force true  
+            STYLE
+                GEOMTRANSFORM 'labelpoly'
+                OUTLINECOLOR 255 255 255
+                WIDTH 3
+            END
+            STYLE
+                GEOMTRANSFORM 'labelpoly'
+                COLOR 0 107 189
+                WIDTH 2
+            END                     
+        end
+        label
+            text '[first_name]'
+            color 255 255 255
+            font "anwb-uu"
+            type truetype
+            size 10
+            position cr
+            offset 0 20
+            partials true
+            force true  
+            STYLE
+                GEOMTRANSFORM 'labelpoly'
+                OUTLINECOLOR 255 255 255
+                WIDTH 3
+            END
+            STYLE
+                GEOMTRANSFORM 'labelpoly'
+                COLOR 0 107 189
+                WIDTH 2
+            END                     
+        end        
+    end
+END
+  
+# XXX niet bovenop label in enkel WMS verzoek?
+LAYER
+    NAME "afritnummers25ki"
+    TYPE POINT
+    CONNECTIONTYPE postgis
+    CONNECTION "host=localhost dbname=rws_vild user=osm password=osm port=5432"
+    DATA "geom from (select p.gid, p.geom as geom, v.exit_nr as exit_nr from tmcpoint p join vild512a_v2 v on (v.loc_nr = p.loc_nr) where length(v.exit_nr) > 0) as foo using unique gid using srid=28992"
+    GROUP "afritnummers"
+    PROJECTION
+      "init=epsg:28992"
+    END
+    class
+        style 
+            symbol 'afrit16'
+            offset 9 0
+            size 12
+        end        
+    end
+  END
+end  
+  
+END
