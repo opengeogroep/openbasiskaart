@@ -10,6 +10,11 @@
         </Directory>
         <Location /mapcache/>
                 Header set Access-Control-Allow-Origin "*"
+		<RequireAll>
+			Require all granted
+			# Deny vanwege MapProxy bulk requests (2017-04-06)
+			Require not ip 78.31.115.30
+		</RequireAll>
         </Location>
 
         # Website
