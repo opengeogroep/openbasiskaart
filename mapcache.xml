@@ -13,7 +13,7 @@
             </params>
         </getmap>
         <http>
-            <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-nb.map</url>
+            <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-nb.map</url>
         </http>
     </source>
     <source name="osm" type="wms">
@@ -25,7 +25,7 @@
             </params>
         </getmap>
         <http>
-            <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-default.map</url>
+            <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-default.map</url>
         </http>
     </source>
     <source name="osm-hq" type="wms">
@@ -38,7 +38,7 @@
             </params>
         </getmap>
         <http>
-             <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-default.map</url>
+             <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-default.map</url>
         </http>
     </source>
     <source name="osm-epsg3857" type="wms">
@@ -50,7 +50,7 @@
             </params>
         </getmap>
         <http>
-            <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-default.map</url>
+            <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-default.map</url>
         </http>
     </source>
             
@@ -138,6 +138,9 @@
 
     <default_format>PNG</default_format>
 
+    <metadata>
+        <title>Openbasiskaart</title>
+    </metadata>
     <service type="wms" enabled="true">
         <full_wms>assemble</full_wms>
         <resample_mode>bilinear</resample_mode>
