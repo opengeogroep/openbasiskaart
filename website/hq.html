@@ -42,6 +42,22 @@ function init(){
     );
     map.addLayer(osm_hq_rd_hq_tms_layer);
 
+    var osm_nb_hq_rd_hq_tms_layer = new OpenLayers.Layer.TMS( "osm-nb-hq-rd-hq-TMS",
+        "/mapcache/tms/",
+        { layername: 'osm-nb-hq@rd-hq', type: "png", serviceVersion:"1.0.0",
+          gutter:0,buffer:0,isBaseLayer:true,transitionEffect:'resize',
+          tileOrigin: new OpenLayers.LonLat(-285401.920000,22598.080000),
+          resolutions:[3440.64,1720.32,860.16,430.08,215.04,107.52,53.76,26.88,13.44,6.72,3.36,1.68,0.84,0.42,0.21,0.105],
+          tileSize: new OpenLayers.Size(256, 256),
+          zoomOffset:0,
+          units:"m",
+          maxExtent: new OpenLayers.Bounds(-285401.920000,22598.080000,595401.920000,903401.920000),
+          projection: new OpenLayers.Projection("EPSG:28992".toUpperCase()),
+          sphericalMercator: false
+        }
+    );
+    map.addLayer(osm_nb_hq_rd_hq_tms_layer);
+
     var osm_nb_rd_tms_layer = new OpenLayers.Layer.TMS( "osm-nb-rd-TMS",
         "/mapcache/tms/",
         { layername: 'osm-nb@rd', type: "png", serviceVersion:"1.0.0",
