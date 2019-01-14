@@ -2,6 +2,8 @@
         ServerName openbasiskaart.nl
         ServerAlias *.openbasiskaart.nl openbasiskaart.b3p.nl
 
+	Protocols h2 http/1.1
+
         # MapCache
         MapCacheAlias /mapcache "/mnt/data/mapcache/mapcache.xml"
         <Directory /mnt/data/mapcache/>
