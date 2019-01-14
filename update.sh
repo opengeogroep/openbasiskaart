@@ -1,14 +1,9 @@
 #!/bin/bash
-# sudo apt-get install realpath xmlstarlet curl ack-grep libdatetime-format-http-perl
+# sudo apt-get install realpath curl
 
 PBF_URL=http://download.geofabrik.de/europe-latest.osm.pbf
 PBF_DIR=/mnt/data/osm
 PBF=europe-latest.osm.pbf
-#PBF_URL=http://127.1.1.1/x.txt
-#PBF_DIR=/mnt/data/osm
-#PBF=1.txt
-
-IMPOSM_DIR=/mnt/data/imposm/
 
 BASEPATH=`realpath $(dirname $0)`
 CURL_STDERR=/tmp/curl-stderr
@@ -18,9 +13,7 @@ function quit() {
   exit $1
 }
 
-mkdir $IMPOSM_DIR 2>/dev/null
-
-#### Step 1: Download PBF ####
+# Download PBF if updated
 
 # Use after curl command, use --stderr $CURL_STDERR option with curl
 function check_curl_fail() {
@@ -33,9 +26,6 @@ function check_curl_fail() {
     quit 1
   fi
 }
-
-# http://stackoverflow.com/questions/5195607/checking-bash-exit-status-of-several-commands-efficiently
-# trap..
 
 mkdir $PBF_DIR 2>/dev/null
 cd $PBF_DIR
@@ -70,16 +60,17 @@ elif [[ $HTTP_CODE -ne 200 ]]; then
   quit 1
 fi
 
-echo HTTP status 200, nieuwe PBF data\!
-
+echo Nieuwe OSM PBF data gedownload\!
+echo
+echo Starten update Openbasiskaart om `date`...
 cd $PBF_DIR
 rm *.cache 2>/dev/null
 set -e
 echo Uitvoeren Imposm...
-imposm --quiet --table-prefix=osm_import_ -d osm --proj=EPSG:28992 --limit-to=$BASEPATH/imposm/imposm_limit.shp -c 4 --read --write --optimize $PBF >/dev/null 
+imposm --quiet --mapping-file=/opt/basemaps/imposm-mapping.py --table-prefix=osm_import_ -d osm --proj=EPSG:28992 --limit-to=$BASEPATH/imposm/imposm_limit.shp -c 4 --read --write --optimize $PBF
 echo Deployen nieuwe gegevens...
 $BASEPATH/deploy.sh
-
-
+echo
+echo Update script beeindigd op `date`
 quit 0
 

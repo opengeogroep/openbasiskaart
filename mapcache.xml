@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapcache>
     <cache name="disk" type="disk">
-        <base>/mnt/data/mapcache</base>
+	<base>/mnt/data/mapcache/current</base>
         <symlink_blank/>
     </cache>
     <source name="osm-nb" type="wms">
