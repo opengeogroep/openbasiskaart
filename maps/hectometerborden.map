@@ -53,7 +53,7 @@ symbol
   end
 end
 
-DEBUG 5
+#DEBUG 5
 
   LAYER
     TYPE POINT
