@@ -11,7 +11,7 @@ umount $OLD
 mkfs.ext4 -F -T news -m 0 -q -O ^has_journal $OLD_DEVICE
 mount $OLD
 echo Deploying imposm tables...
-imposm --table-prefix=osm_import_ --table-prefix-production=osm_new_ -d osm --deploy-production-tables
+imposm --table-prefix=osm_import_ --table-prefix-production=osm_new_ --mapping-file=/opt/basemaps/imposm-mapping.py -d osm --deploy-production-tables
 echo Switching current link to emptied loop device mounted at `realpath $OLD`...
 rm current
 ln -s $OLD current
