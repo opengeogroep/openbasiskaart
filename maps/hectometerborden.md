@@ -4,8 +4,8 @@ Mapfile Hectometerborden
 # 0. Database setup (eenmalig)
 
 ```bash
-createdb nwb --owner=osm
-psql nwb -c 'create extension postgis;'
+createdb nwb_falck --owner=osm
+psql nwb_falck -c 'create extension postgis;'
 ```
 
 # 1. Gegevens inladen (maandelijks)
