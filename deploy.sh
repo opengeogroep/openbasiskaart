@@ -45,6 +45,14 @@ ln -s ../../osm/rd/08
 cd ../../..
 chown -R www-data:www-data current/
 
+echo Prewarming tables...
+su - postgres -c 'psql -d osm' <<EOF
+select pg_prewarm('osm_new_buildings');
+select pg_prewarm('osm_new_landusages');
+select pg_prewarm('osm_new_roads');
+select pg_prewarm('osm_new_waterareas');
+EOF
+
 echo Seeding tileset osm and osm-nb...
 su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 0,9 -n 16" >/dev/null
 echo Seeding tileset osm-hq and osm-nb-hq...

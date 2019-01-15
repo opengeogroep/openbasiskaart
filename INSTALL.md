@@ -52,10 +52,11 @@ a2ensite openbasiskaart openbasiskaart-ssl
 a2enmod headers cgid ssl http2
 service apache2 restart
 
-su - postgres -c 'createuser osm'
+su - postgres -c "createuser osm"
 su - postgres -c "psql -c \"alter role osm password 'osm'\""
-su - postgres -c 'createdb --owner=osm osm'
+su - postgres -c "createdb --owner=osm osm"
 su - postgres -c "psql osm -c 'create extension postgis'"
+su - postgres -c "psql osm -c 'create extension pg_prewarm'"
 
 # gebruik Ubuntu imposm package; is up-to-date
 #pip install  https://github.com/omniscale/imposm/tarball/master
