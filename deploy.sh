@@ -8,7 +8,7 @@ OLD_DEVICE=`cat /proc/mounts | grep $(realpath $OLD) | cut -d ' ' -f 1`
 echo Current tileset is linked to `realpath $CURRENT`
 echo Clearing out old tiles in `realpath $OLD` on loop device $OLD_DEVICE...
 umount $OLD
-mkfs.ext4 -F -T news -m 0 -q -O ^has_journal $OLD_DEVICE
+mkfs.ext4 -F -m 0 -q -O ^has_journal $OLD_DEVICE
 mount $OLD
 echo Deploying imposm tables...
 imposm --table-prefix=osm_import_ --table-prefix-production=osm_new_ --mapping-file=/opt/basemaps/imposm-mapping.py -d osm --deploy-production-tables
@@ -53,9 +53,13 @@ select pg_prewarm('osm_new_roads');
 select pg_prewarm('osm_new_waterareas');
 EOF
 
-echo Seeding tileset osm and osm-nb...
-su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 0,9 -n 16" >/dev/null
-echo Seeding tileset osm-hq and osm-nb-hq...
-su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-hq -g rd-hq -z 0,8 -n 16" >/dev/null
+echo Seeding tileset osm levels 0 through 9...
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 0,9 -n 8" >/dev/null
+echo Seeding tileset osm level 10...
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 10,10 -n 8" >/dev/null
 
+echo Seeding tileset osm-hq levels 0 through 9...
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-hq -g rd-hq -z 0,9 -n 8" >/dev/null
+echo Seeding tileset osm-hq level 10...
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-hq -g rd-hq -z 10,10 -n 8" >/dev/null
 
