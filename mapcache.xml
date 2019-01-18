@@ -114,6 +114,8 @@
         <format>PNG</format>
         <grid>rd</grid>
         <expires>3600</expires>
+	<metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
     </tileset>
     <tileset name="osm">
         <metadata>
@@ -125,6 +127,8 @@
         <format>PNG</format>
         <grid>rd</grid>
         <expires>3600</expires>
+	<metatile>4 4</metatile>
+	<metabuffer>10</metabuffer>
     </tileset>
     <tileset name="osm-hq">
         <metadata>
@@ -136,6 +140,8 @@
         <format>PNG</format>
         <grid>rd-hq</grid>
         <expires>3600</expires>
+	<metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
     </tileset> 
     <tileset name="osm-nb-hq">
         <metadata>
@@ -147,6 +153,8 @@
         <format>PNG</format>
         <grid>rd-hq</grid>
         <expires>3600</expires>
+	<metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
     </tileset>
     <tileset name="osm-epsg3857">
         <metadata>
@@ -158,6 +166,8 @@
         <format>PNG</format>
         <grid>epsg3857</grid>
         <expires>3600</expires>
+	<metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
     </tileset>       
 
     <default_format>PNG</default_format>
