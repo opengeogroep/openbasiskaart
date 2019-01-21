@@ -67,9 +67,11 @@ cd $PBF_DIR
 rm *.cache 2>/dev/null
 set -e
 echo Uitvoeren Imposm...
+imposm --quiet --mapping-file=/opt/basemaps/imposm-mapping.py -d osm --remove-backup-tables
 imposm --quiet --mapping-file=/opt/basemaps/imposm-mapping.py --table-prefix=osm_import_ -d osm --proj=EPSG:28992 --limit-to=$BASEPATH/imposm/imposm_limit.shp -c 4 --read --write --optimize $PBF
+rm *.cache 2>/dev/null
 echo Maken databasedump...
-/usr/bin/time -f "Time: %es" su - postgres -c 'pg_dump -F c -t "osm_import_*" -d osm' > osm_import.backup
+/usr/bin/time -f "Time: %E" su - postgres -c 'pg_dump -F c -t "osm_import_*" -d osm' > osm_import.backup
 echo Deployen nieuwe gegevens...
 $BASEPATH/deploy.sh
 echo
