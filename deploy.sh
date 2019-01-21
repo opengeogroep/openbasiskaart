@@ -54,12 +54,21 @@ select pg_prewarm('osm_new_waterareas');
 EOF
 
 echo Seeding tileset osm levels 0 through 9...
-/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 0,9 -n 8" >/dev/null
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 0,9 -n 8 | grep total"
 echo Seeding tileset osm level 10...
-/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 10,10 -n 8" >/dev/null
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 10,10 -n 8 | grep total"
+echo Seeding tileset osm level 11...
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 11,11 -n 8 | grep total"
+echo Seeding tileset osm level 12...
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm -g rd -z 12,12 -n 8 | grep total"
+
 
 echo Seeding tileset osm-hq levels 0 through 9...
-/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-hq -g rd-hq -z 0,9 -n 8" >/dev/null
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-hq -g rd-hq -z 0,9 -n 8 | grep total"
 echo Seeding tileset osm-hq level 10...
-/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-hq -g rd-hq -z 10,10 -n 8" >/dev/null
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-hq -g rd-hq -z 10,10 -n 8 | grep total"
+echo Seeding tileset osm-hq level 11...
+# 7.6 G schijfruimte
+/usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c mapcache.xml -d $BASEPATH/seeding/mapcache_seed_extent.shp -t osm-hq -g rd-hq -z 11,11 -n 8 | grep total"
+# Niet seeden level 12, >15G schijfruimte
 
