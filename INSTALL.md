@@ -45,12 +45,21 @@ cat >> /etc/fstab <<'EOF'
 EOF
 mount a b
 
+# Vergroten van loop device /dev/loop0 gemount op /mnt/data/mapcache/a (kan gemount blijven):
+# dd if=/dev/zero of=tiles_a.img bs=1024M count=10 conv=notrunc oflag=append
+# losetup -c /dev/loop0
+# resize2fs /dev/loop0
+# fstrim /mnt/data/mapcache/a
+
 # ServerAlias is globaal ingesteld in openbasiskaart.conf (om warning bij herstart te vermijden), 
 # daarom moet 000-default moet gedisabled worden
 a2dissite 000-default
 a2ensite openbasiskaart openbasiskaart-ssl
 a2enmod headers cgid ssl http2
 service apache2 restart
+
+# Let op! Vanwege schijnbare memory leak in mod_mapcache in /etc/apache2/mods-enabled/mpm_event.conf:
+# MaxConnectionsPerChild   2000
 
 su - postgres -c "createuser osm"
 su - postgres -c "psql -c \"alter role osm password 'osm'\""
