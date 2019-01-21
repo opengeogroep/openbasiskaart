@@ -45,6 +45,7 @@ cat >> /etc/fstab <<'EOF'
 EOF
 mount a b
 
+# Disk usage van sparse file van loop device met 'discarded' blocks bekijken met 'ls -lhs'
 # Vergroten van loop device /dev/loop0 gemount op /mnt/data/mapcache/a (kan gemount blijven):
 # dd if=/dev/zero of=tiles_a.img bs=1024M count=10 conv=notrunc oflag=append
 # losetup -c /dev/loop0
