@@ -12,6 +12,8 @@ sudo apt-get install curl postgresql postgresql-10-postgis-2.4 postgresql-10-pos
 
 DIR=`pwd`
 
+Volgende commando's als root:
+
 # Kopie van GitHub repo voor website
 git clone https://github.com/opengeogroep/openbasiskaart.git /var/www/openbasiskaart
 chown -R www-data:www-data /var/www/openbasiskaart
@@ -54,6 +56,10 @@ mount a b
 
 # ServerAlias is globaal ingesteld in openbasiskaart.conf (om warning bij herstart te vermijden), 
 # daarom moet 000-default moet gedisabled worden
+
+# Let op: voor LetsEncrypt alleen openbasiskaart vhost enablen, niet SSL. Daarna LetsEncrypt
+# Apache plugin z'n werk laten doen.
+
 a2dissite 000-default
 a2ensite openbasiskaart openbasiskaart-ssl
 a2enmod headers cgid ssl http2
@@ -74,7 +80,7 @@ su - postgres -c "psql osm -c 'create extension pg_prewarm'"
 
 cd /opt
 git clone https://github.com/mapserver/basemaps.git 
-make data
+cd basemaps; make data
 
 # patch voor nb stijl
 # patch voor EXTENT bij elke LAYER, omdat anders GetCap ST_Extent() doet met deze warnings:
