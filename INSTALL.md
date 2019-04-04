@@ -31,6 +31,8 @@ mkdir -p /mnt/data/mapcache
 ln -s $DIR/mapcache.xml /mnt/data/mapcache
 
 # Maken loop devices voor snel switchen tiles
+# LET OP: met ssd niet nodig, met beperkte schijfruimte alleen maar lastig
+# LET OP: bij verwijderen loop devices deze uit /etc/fstab verwijderen, anders boot systeem niet door
 cd /mnt/data/mapcache
 dd if=/dev/zero of=tiles_a.img bs=1024M count=30
 dd if=/dev/zero of=tiles_b.img bs=1024M count=30
@@ -95,6 +97,13 @@ OSM_SRID=28992 OSM_EXTENT="12000 304000 280000 620000" OSM_WMS_SRS="EPSG:4326 EP
 
 # Doe nu stappen in update en deploy script, behalve imposm --deploy-production-tables
 mkdir /mnt/data/osm
+
+# Let op! Indien van een oude server osm_import.backup beschikbaar is, kan deze snel worden geimporteerd om
+# Imposm niet te hoeven draaien:
+
+scp iemand@oude.server.nl:/mnt/data/osm/osm_import.backup /mnt/data/osm
+/usr/bin/time -f "Time: %E" su - postgres -c 'pg_restore -d osm /mnt/data/osm/osm_import.backup'
+
 $DIR/update.sh
 
 # Let op: zet MAILTO=jouw@email.nl in /etc/crontab en zorg dat bv exim4 dit forwardt naar smarthost!
