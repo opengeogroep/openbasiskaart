@@ -134,6 +134,9 @@ end
     CONNECTIONTYPE postgis
     CONNECTION "host=localhost dbname=nwb_falck user=osm password=osm port=5432"
     DATA "geom from (select * from hectometerborden) as foo using unique gid using srid=28992"
+    METADATA
+        "gml_include_items" "all"
+    END
     STATUS ON
     GROUP "nwb"
     DEBUG 1
