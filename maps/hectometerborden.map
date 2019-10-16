@@ -23,6 +23,22 @@ OUTPUTFORMAT
   IMAGEMODE RGBA
   EXTENSION "png"
 END
+OUTPUTFORMAT
+  NAME "SHAPEZIP"
+  DRIVER "OGR/ESRI Shapefile"
+  FORMATOPTION "STORAGE=filesystem"
+  FORMATOPTION "FORM=zip"
+  FORMATOPTION "FILENAME=result.zip"
+END
+OUTPUTFORMAT
+  NAME "SPATIALITEZIP"
+  DRIVER "OGR/SQLITE"
+  MIMETYPE "application/zip"
+  FORMATOPTION "DSCO:SPATIALITE=YES"
+  FORMATOPTION "STORAGE=filesystem"
+  FORMATOPTION "FORM=zip"
+  FORMATOPTION "FILENAME=result.db.zip"
+END
 CONFIG "MS_ERRORFILE" "stderr"
 PROJECTION
    "init=epsg:28992"
@@ -56,6 +72,10 @@ end
 #DEBUG 5
 
   LAYER
+    METADATA
+      "gml_include_items" "all"
+      "wfs_getfeature_formatlist" "OGRGML,SHAPEZIP,SPATIALITEZIP"
+    END
     TYPE POINT
     CONNECTIONTYPE postgis
     CONNECTION "host=localhost dbname=nwb_falck user=osm password=osm port=5432"
@@ -73,6 +93,10 @@ end
   END
   
   LAYER
+    METADATA
+      "gml_include_items" "all"
+      "wfs_getfeature_formatlist" "OGRGML,SHAPEZIP,SPATIALITEZIP"
+    END
     TYPE POINT
     DATA "hmb_1k.shp"
     CONNECTIONTYPE postgis
@@ -92,6 +116,10 @@ end
   END
 
   LAYER
+    METADATA
+      "gml_include_items" "all"
+      "wfs_getfeature_formatlist" "OGRGML,SHAPEZIP,SPATIALITEZIP"
+    END
     TYPE POINT
     CONNECTIONTYPE postgis
     CONNECTION "host=localhost dbname=nwb_falck user=osm password=osm port=5432"
@@ -110,6 +138,10 @@ end
   END
   
   LAYER
+    METADATA
+      "gml_include_items" "all"
+      "wfs_getfeature_formatlist" "OGRGML,SHAPEZIP,SPATIALITEZIP"
+    END
     TYPE POINT
     DATA "hmb_200m.shp"
     CONNECTIONTYPE postgis
@@ -130,6 +162,10 @@ end
   END
 
   LAYER
+    METADATA
+      "gml_include_items" "all"
+      "wfs_getfeature_formatlist" "OGRGML,SHAPEZIP,SPATIALITEZIP"
+    END
     TYPE POINT
     CONNECTIONTYPE postgis
     CONNECTION "host=localhost dbname=nwb_falck user=osm password=osm port=5432"
