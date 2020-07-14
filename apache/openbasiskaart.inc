@@ -47,5 +47,6 @@
                 AllowOverride None
                 Options +ExecCGI +FollowSymLinks
                 Require all granted
+		Header set Access-Control-Allow-Origin "*"
         </Directory>
 
