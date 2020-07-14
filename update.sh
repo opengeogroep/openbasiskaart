@@ -37,6 +37,8 @@ fi
 rm /tmp/curl* 2> /dev/null
 curl --fail -s \
  --max-time 3600 \
+ --retry 3 \
+ --retry-delay 1 \
  --output $PBF_DIR/$PBF \
  --remote-time \
  --show-error \
