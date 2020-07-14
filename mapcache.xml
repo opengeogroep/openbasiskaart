@@ -16,6 +16,19 @@
             <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-nb.map</url>
         </http>
     </source>
+    <source name="osm-nbr" type="wms">
+        <getmap>
+            <params>
+                <FORMAT>image/png</FORMAT>
+                <LAYERS>default</LAYERS>
+                <SRS>EPSG:28992</SRS>
+            </params>
+        </getmap>
+        <http>
+            <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-nbr.map</url>
+        </http>
+    </source>
+
     <source name="osm" type="wms">
         <getmap>
             <params>
@@ -52,6 +65,19 @@
         </getmap>
         <http>
              <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-nb.map</url>
+        </http>
+    </source>
+    <source name="osm-nbr-hq" type="wms">
+        <getmap>
+            <params>
+                <FORMAT>image/png</FORMAT>
+                <LAYERS>default</LAYERS>
+                <SRS>EPSG:28992</SRS>
+                <map_resolution>144</map_resolution>
+            </params>
+        </getmap>
+        <http>
+             <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-nbr.map</url>
         </http>
     </source>
     <source name="osm-epsg3857" type="wms">
@@ -117,6 +143,19 @@
 	<metatile>4 4</metatile>
         <metabuffer>10</metabuffer>
     </tileset>
+    <tileset name="osm-nbr">
+        <metadata>
+            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart zonder gebouwen en wegen</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+        </metadata>
+        <source>osm-nbr</source>
+        <cache>disk</cache>
+        <format>PNG</format>
+        <grid>rd</grid>
+        <expires>3600</expires>
+        <metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
+    </tileset>    
     <tileset name="osm">
         <metadata>
             <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart</title>
@@ -145,7 +184,7 @@
     </tileset> 
     <tileset name="osm-nb-hq">
         <metadata>
-            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart (HQ tiles)</title>
+            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart zonder gebouwen (HQ tiles)</title>
             <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
         </metadata>
         <source>osm-nb-hq</source>
@@ -156,6 +195,19 @@
 	<metatile>4 4</metatile>
         <metabuffer>10</metabuffer>
     </tileset>
+    <tileset name="osm-nbr-hq">
+        <metadata>
+            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart zonder gebouwen en wegen (HQ tiles)</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+        </metadata>
+        <source>osm-nbr-hq</source>
+        <cache>disk</cache>
+        <format>PNG</format>
+        <grid>rd-hq</grid>
+        <expires>3600</expires>
+        <metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
+    </tileset>    
     <tileset name="osm-epsg3857">
         <metadata>
             <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart (EPSG:3857)</title>
@@ -169,6 +221,19 @@
 	<metatile>4 4</metatile>
         <metabuffer>10</metabuffer>
     </tileset>       
+    <tileset name="osm-g">
+	<metadata>
+            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart (Google Maps Compatible)</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+        </metadata>
+        <source>osm-epsg3857</source>
+	<cache>disk</cache>
+        <format>PNG</format>
+	<grid>g</grid>
+	<expires>3600</expires>
+        <metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
+    </tileset>
 
     <default_format>PNG</default_format>
 
