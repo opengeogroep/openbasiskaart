@@ -4,6 +4,9 @@
 
 	Protocols h2 http/1.1
 
+	# goaccess log format: %h %^[%d:%t %^] "%r" %s %b %D "%M" "%R" "%u"
+	LogFormat "%h %l %u %t \"%r\" %>s %b %D \"%{Content-Type}o\" \"%{Referer}i\" \"%{User-agent}i\"" goaccess
+
         # MapCache
         MapCacheAlias /mapcache "/mnt/data/mapcache/mapcache.xml"
         <Directory /mnt/data/mapcache/>

@@ -107,9 +107,27 @@ scp iemand@oude.server.nl:/mnt/data/osm/osm_import.backup /mnt/data/osm
 $DIR/update.sh
 
 # Let op: zet MAILTO=jouw@email.nl in /etc/crontab en zorg dat bv exim4 dit forwardt naar smarthost!
-echo '30 170 * * * root /home/matthijsln/openbasiskaart/update-cron.sh' >> /etc/crontab
+echo "30 170 * * * root /home/$USER/openbasiskaart/update-cron.sh" >> /etc/crontab
 
 # Link directory met extra mapfiles, zie maps/*.md voor extra instructies
 
 ln -s $DIR/maps /opt
+
+# Web stats
+
+In de Apache configuratie is een `goaccess` log format ingesteld met bovenop het "combined" formaat de processing tijd en het response content type.
+
+Installeer GoAccess 1.4.3 van source, zie https://goaccess.io/.
+
+Link het configuratiebestand:
+
+ln -s /home/$USER/openbasiskaart/goaccess/goaccess.conf /usr/local/etc/goaccess/goaccess.conf
+
+Zorg ervoor dat de stats elke minuut geupdate worden:
+
+`echo "* * * * * root /home/$USER/openbasiskaart/goaccess/cron-goaccess.sh" >> /etc/crontab`
+
+De statistieken zijn te zien via https://www.openbasiskaart.nl/report.html. Dit rapport bevat geen IP-adressen of referrers. Deze zijn voor analyse van overbelasting wel te zien met `goaccess --restore` of `goaccess --restore -o report_all.html --with-output-resolver`.
+
+Backup van stats: directory `/var/lib/goaccess`. Ook oude Apache logs kunnen ingelezen worden (evt ook nog in combined format met `--log-format=COMBINED`).
 
