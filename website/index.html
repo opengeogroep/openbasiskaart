@@ -154,6 +154,7 @@
               <a href="http://www.postgis.org/">PostGIS</a> database te laden en <a href="http://www.mapserver.org"/>MapServer</a>
               om de kaart te renderen en <a href="http://mapserver.org/mapcache/">MapCache</a> om dit als tiles aan te bieden.
             </p>
+	    <h3 id="stats"></h3>
         </div>
         <hr class="featurette-divider">
         <div class="featurette">
@@ -281,7 +282,19 @@
 //                moment.locale("nl");
 //                console.log(lmh  + ", " + );
             });
+
+	    updateStats();
         });
+	function updateStats() {
+		$.ajax("/report.json").done(function(data) {
+			var visitors = data.visitors.data[0];
+			var stats = "Aantal hits vandaag: " + visitors.hits.count.toLocaleString()
+				+ " &middot; bezoekers: " + visitors.visitors.count.toLocaleString()
+				+ " &middot; data verstuurd: " + (visitors.bytes.count / (1024 * 1024 * 1024)).toFixed(1).toLocaleString() + " GiB";
+			$("#stats").html(stats);
+			setTimeout(updateStats, 30000);
+		});
+	}
     </script>
     <script src="js/holder.js"></script>
 </div>
