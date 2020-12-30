@@ -4,7 +4,8 @@ STDOUT_LOG=update_site_hook_stdout.log
 STDERR_LOG=update_site_hook_stderr.log
 date > /tmp/$STDOUT_LOG
 date > /tmp/$STDERR_LOG
-git pull >> /tmp/$STDOUT_LOG 2>> /tmp/$STDERR_LOG
+git fetch
+git reset origin/master --hard >> /tmp/$STDOUT_LOG 2>> /tmp/$STDERR_LOG
 if [ $? -ne 0 ]; then
 	echo -e 'Content-Type: text/plain\n'
 	echo -e 'Something went wrong executing "git pull":\n' > /tmp/fail_msg
