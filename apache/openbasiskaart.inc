@@ -21,6 +21,9 @@
 			Require not ip 78.31.115.30
 		</RequireAll>
         </Location>
+	<LocationMatch ^/mapcache/demo/>
+		Header set Content-Security-Policy upgrade-insecure-requests
+	</LocationMatch>
 
         # Website
         DocumentRoot /var/www/openbasiskaart/website
