@@ -1,0 +1,6 @@
+{
+    "connection": "postgis://osm:osm@localhost/osm",
+    "cachedir": "/var/opt/imposm-cache",
+    "mapping": "/opt/basemaps/imposm3-mapping.json",
+    "srid": 3857
+}

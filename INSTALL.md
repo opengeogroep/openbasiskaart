@@ -1,89 +1,47 @@
-Installatieinstructies Openbasiskaart (Ubuntu 18.04)
-====================================================
+Installatieinstructies Openbasiskaart
+=====================================
+
+Zoveel mogelijke automatische installatie en setup met cloud-init.
+
+Lokaal met bijvoorbeeld Multipass:
 
 ```bash
-git clone https://github.com/opengeogroep/openbasiskaart.git
-cd openbasiskaart
+multipass launch -c 12 -d 20G -m 8G -n obk --mount .:/opt/openbasiskaart --cloud-init cloud-init.yaml 22.04
+```
 
-# Installeren packages
-sudo apt-get install curl postgresql postgresql-10-postgis-2.4 postgresql-10-postgis-2.4-scripts apache2 libapache2-mod-fcgid libapache2-mod-mapcache mapcache-tools cgi-mapserver mapserver-bin imposm make unzip gcc
+Hetzner:
 
-# PostgreSQL tuning niet nodig, fsync=off maakt imposm --write niet sneller
+Let op: als je geen `--ssh-key` argument gebruikt, wordt er een root account gemaakt met verlopen wachtwoord. Dan kan
+door cloud-init niet postgresql worden geinstalleerd omdat geen postgres user account kan worden aangemaakt. Eventueel
+kan met cloud-init het wachtwoord op niet-verlopen worden gezet.
 
-DIR=`pwd`
+```
+hcloud server create \
+    --type cx11 \
+    --image ubuntu-22.04 \
+    --name openbasiskaart-v3 \
+    --ssh-key matthijsln@b3p-matthijs \
+    --user-data-from-file cloud-init.yaml
+```
 
-Volgende commando's als root:
+Log hierna in op de server en controleer met `cloud-init status --long` of alles geinstalleerd is en check
+`/var/log/cloud-init-output.log`.
 
-# Kopie van GitHub repo voor website
-git clone https://github.com/opengeogroep/openbasiskaart.git /var/www/openbasiskaart
-chown -R www-data:www-data /var/www/openbasiskaart
+Voer daarna uit:
+```bash
+cd /opt/openbasiskaart
+sudo wget https://download.geofabrik.de/europe/netherlands-latest.osm.pbf
+sudo ./imposm-import.sh
+```
 
-# Kopieer github update hook (zie settings openbasiskaart GitHub repo)
-cp $DIR/github-update-site-webhook.sh /usr/lib/cgi-bin
-
-# Link configuratiebestanden
-ln -s $DIR/apache/openbasiskaart.conf /etc/apache2/sites-available/openbasiskaart.conf
-ln -s $DIR/apache/openbasiskaart-ssl.conf /etc/apache2/sites-available/openbasiskaart-ssl.conf
-ln -s $DIR/apache/openbasiskaart.inc /etc/apache2/openbasiskaart.inc
-cd /usr/lib/cgi-bin; sudo ln -s mapserv mapserv.fcgi
-# Maak eventueel /mnt/data een apart volume
-mkdir -p /mnt/data/mapcache
-ln -s $DIR/mapcache.xml /mnt/data/mapcache
-
-# Maken loop devices voor snel switchen tiles
-# LET OP: met ssd niet nodig, met beperkte schijfruimte alleen maar lastig
-# LET OP: bij verwijderen loop devices deze uit /etc/fstab verwijderen, anders boot systeem niet door
-cd /mnt/data/mapcache
-dd if=/dev/zero of=tiles_a.img bs=1024M count=30
-dd if=/dev/zero of=tiles_b.img bs=1024M count=30
-losetup -fP tiles_a.img
-losetup -fP tiles_b.img
-mkfs.ext4 -F -T news -m 0 -q -O ^has_journal /dev/loop0
-mkfs.ext4 -F -T news -m 0 -q -O ^has_journal /dev/loop1
-mkdir a b
-ln -s a current
-chown -R www-data:www-data current/
-cat >> /etc/fstab <<'EOF'
-/dev/loop0      /mnt/data/mapcache/a    ext4    rw,noatime,barrier=0       0       0
-/dev/loop1      /mnt/data/mapcache/b    ext4    rw,noatime,barrier=0       0       0
-EOF
-mount a b
-
-# Disk usage van sparse file van loop device met 'discarded' blocks bekijken met 'ls -lhs'
-# Vergroten van loop device /dev/loop0 gemount op /mnt/data/mapcache/a (kan gemount blijven):
-# dd if=/dev/zero of=tiles_a.img bs=1024M count=10 conv=notrunc oflag=append
-# losetup -c /dev/loop0
-# resize2fs /dev/loop0
-# fstrim /mnt/data/mapcache/a
-
-# ServerAlias is globaal ingesteld in openbasiskaart.conf (om warning bij herstart te vermijden), 
-# daarom moet 000-default moet gedisabled worden
-
-# Let op: voor LetsEncrypt alleen openbasiskaart vhost enablen, niet SSL. Daarna LetsEncrypt
-# Apache plugin z'n werk laten doen.
-
-a2dissite 000-default
-a2ensite openbasiskaart openbasiskaart-ssl
-a2enmod headers cgid ssl http2
-service apache2 restart
-
+TODO (oud)
+==========
+```
 # Let op! Vanwege schijnbare memory leak in mod_mapcache in /etc/apache2/mods-enabled/mpm_event.conf:
 # MaxConnectionsPerChild   2000
+```
 
-su - postgres -c "createuser osm"
-su - postgres -c "psql -c \"alter role osm password 'osm'\""
-su - postgres -c "createdb --owner=osm osm"
-su - postgres -c "psql osm -c 'create extension postgis'"
-su - postgres -c "psql osm -c 'create extension pg_prewarm'"
-
-# gebruik Ubuntu imposm package; is up-to-date
-#pip install  https://github.com/omniscale/imposm/tarball/master
-#pip install https://github.com/omniscale/imposm/tarball/master
-
-cd /opt
-git clone https://github.com/mapserver/basemaps.git 
-cd basemaps; make data
-
+```
 # patch voor nb stijl
 # patch voor EXTENT bij elke LAYER, omdat anders GetCap ST_Extent() doet met deze warnings:
 # landuse4/landuse5: WARNING: Optional Ex_GeographicBoundingBox could not be established for this layer.  Consider setting the EXTENT in the LAYER object, or wms_extent metadata. Also check that your data exists in the DATA statement

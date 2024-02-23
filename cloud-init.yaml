@@ -1,0 +1,50 @@
+#cloud-config
+
+apt:
+  sources:
+    ubuntugis:
+      source: "ppa:ubuntugis/ubuntugis-unstable"
+
+packages:
+  - glances
+  - nala
+  - postgresql-14
+  - postgresql-14-postgis-3
+  - apache2
+  - libapache2-mod-fcgid
+  - libapache2-mod-mapcache
+  - mapcache-tools
+  - cgi-mapserver
+  - mapserver-bin
+  - make
+  - unzip
+  - gcc
+
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+
+ssh_pwauth: false
+disable_root: true
+
+# Alleen nodig bij Hetzner als geen ssh-keys zijn toegevoegd. Dan wordt root wachtwoord expired ingesteld, en
+# kan geen postgres user worden aangemaakt bij installeren packages door cloud-init
+#chpasswd:
+#  expire: false
+#  users:
+#    - name: root
+
+users:
+  - default
+  - name: matthijsln
+    gecos: Matthijs Laan
+    shell: /bin/bash
+    groups:
+      - users
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_import_id:
+      - gh:matthijsln
+
+runcmd:
+#  - git clone https://github.com/opengeogroep/openbasiskaart.git /opt/openbasiskaart
+  - /opt/openbasiskaart/install.sh

@@ -1,34 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapcache>
+    <metadata>
+        <title>Openbasiskaart</title>
+    </metadata>
+    <service type="wms" enabled="true">
+        <full_wms>assemble</full_wms>
+        <resample_mode>bilinear</resample_mode>
+        <format>PNG</format>
+        <maxsize>4096</maxsize>
+    </service>
+    <service type="wmts" enabled="true"/>
+    <service type="tms" enabled="true"/>
+    <service type="kml" enabled="false"/>
+    <service type="gmaps" enabled="false"/>
+    <service type="ve" enabled="false"/>
+    <service type="demo" enabled="true"/>
+    <errors>log</errors>
+    <lock_dir>/tmp</lock_dir>
+    <default_format>PNG</default_format>
     <cache name="disk" type="disk">
-	<base>/mnt/data/mapcache/current</base>
+    <base>/var/opt/mapcache</base>
         <symlink_blank/>
     </cache>
-    <source name="osm-nb" type="wms">
-        <getmap>
-            <params>
-                <FORMAT>image/png</FORMAT>
-                <LAYERS>default</LAYERS>
-                <SRS>EPSG:28992</SRS>
-            </params>
-        </getmap>
-        <http>
-            <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-nb.map</url>
-        </http>
-    </source>
-    <source name="osm-nbr" type="wms">
-        <getmap>
-            <params>
-                <FORMAT>image/png</FORMAT>
-                <LAYERS>default</LAYERS>
-                <SRS>EPSG:28992</SRS>
-            </params>
-        </getmap>
-        <http>
-            <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-nbr.map</url>
-        </http>
-    </source>
-
     <source name="osm" type="wms">
         <getmap>
             <params>
@@ -38,7 +31,7 @@
             </params>
         </getmap>
         <http>
-            <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-default.map</url>
+            <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-default.map</url>
         </http>
     </source>
     <source name="osm-hq" type="wms">
@@ -51,7 +44,19 @@
             </params>
         </getmap>
         <http>
-             <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-default.map</url>
+            <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-default.map</url>
+        </http>
+    </source>
+    <source name="osm-nb" type="wms">
+        <getmap>
+            <params>
+                <FORMAT>image/png</FORMAT>
+                <LAYERS>default</LAYERS>
+                <SRS>EPSG:28992</SRS>
+            </params>
+        </getmap>
+        <http>
+            <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-nb.map</url>
         </http>
     </source>
     <source name="osm-nb-hq" type="wms">
@@ -64,7 +69,19 @@
             </params>
         </getmap>
         <http>
-             <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-nb.map</url>
+            <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-nb.map</url>
+        </http>
+    </source>
+    <source name="osm-nbr" type="wms">
+        <getmap>
+            <params>
+                <FORMAT>image/png</FORMAT>
+                <LAYERS>default</LAYERS>
+                <SRS>EPSG:28992</SRS>
+            </params>
+        </getmap>
+        <http>
+            <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-nbr.map</url>
         </http>
     </source>
     <source name="osm-nbr-hq" type="wms">
@@ -77,7 +94,7 @@
             </params>
         </getmap>
         <http>
-             <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-nbr.map</url>
+             <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-nbr.map</url>
         </http>
     </source>
     <source name="osm-epsg3857" type="wms">
@@ -89,7 +106,7 @@
             </params>
         </getmap>
         <http>
-            <url>http://127.0.0.1/cgi-bin/mapserv?map=/opt/basemaps/osm-default.map</url>
+            <url>http://127.0.0.1/cgi-bin/mapserv.fcgi?map=/opt/basemaps/osm-default.map</url>
         </http>
     </source>
             
@@ -129,24 +146,63 @@
         <units>m</units>
         <size>256 256</size>
     </grid>
-    
+
+    <tileset name="osm">
+        <metadata>
+            <title>Openbasiskaart</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, https://www.openstreetmap.org/copyright). Visuele stijl: https://github.com/MapServer/basemaps. https://www.openbasiskaart.nl/ wordt gehost door https://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+        </metadata>
+        <source>osm</source>
+        <cache>disk</cache>
+        <format>PNG</format>
+        <grid>rd</grid>
+        <expires>3600</expires>
+        <metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
+    </tileset>
+    <tileset name="osm-hq">
+        <metadata>
+            <title>Openbasiskaart 2x-dpi</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, https://www.openstreetmap.org/copyright). Visuele stijl: https://github.com/MapServer/basemaps. https://www.openbasiskaart.nl/ wordt gehost door https://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+        </metadata>
+        <source>osm-hq</source>
+        <cache>disk</cache>
+        <format>PNG</format>
+        <grid>rd-hq</grid>
+        <expires>3600</expires>
+        <metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
+    </tileset>
     <tileset name="osm-nb">
         <metadata>
-            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart zonder gebouwen</title>
-            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+            <title>Openbasiskaart zonder gebouwen</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, https://www.openstreetmap.org/copyright). Visuele stijl: https://github.com/MapServer/basemaps. https://www.openbasiskaart.nl/ wordt gehost door https://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
         </metadata>
         <source>osm-nb</source>
         <cache>disk</cache>
         <format>PNG</format>
         <grid>rd</grid>
         <expires>3600</expires>
-	<metatile>4 4</metatile>
+        <metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
+    </tileset>
+    <tileset name="osm-nb-hq">
+        <metadata>
+            <title>Openbasiskaart zonder gebouwen 2x-dpi</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, https://www.openstreetmap.org/copyright). Visuele stijl: https://github.com/MapServer/basemaps. https://www.openbasiskaart.nl/ wordt gehost door https://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+        </metadata>
+        <source>osm-nb-hq</source>
+        <cache>disk</cache>
+        <format>PNG</format>
+        <grid>rd-hq</grid>
+        <expires>3600</expires>
+        <metatile>4 4</metatile>
         <metabuffer>10</metabuffer>
     </tileset>
     <tileset name="osm-nbr">
         <metadata>
-            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart zonder gebouwen en wegen</title>
-            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+            <title>Openbasiskaart zonder gebouwen en wegen</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, https://www.openstreetmap.org/copyright). Visuele stijl: https://github.com/MapServer/basemaps. https://www.openbasiskaart.nl/ wordt gehost door https://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
         </metadata>
         <source>osm-nbr</source>
         <cache>disk</cache>
@@ -155,50 +211,11 @@
         <expires>3600</expires>
         <metatile>4 4</metatile>
         <metabuffer>10</metabuffer>
-    </tileset>    
-    <tileset name="osm">
-        <metadata>
-            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart</title>
-            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
-        </metadata>
-        <source>osm</source>
-        <cache>disk</cache>
-        <format>PNG</format>
-        <grid>rd</grid>
-        <expires>3600</expires>
-	<metatile>4 4</metatile>
-	<metabuffer>10</metabuffer>
-    </tileset>
-    <tileset name="osm-hq">
-        <metadata>
-            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart (HQ tiles)</title>
-            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
-        </metadata>
-        <source>osm-hq</source>
-        <cache>disk</cache>
-        <format>PNG</format>
-        <grid>rd-hq</grid>
-        <expires>3600</expires>
-	<metatile>4 4</metatile>
-        <metabuffer>10</metabuffer>
-    </tileset> 
-    <tileset name="osm-nb-hq">
-        <metadata>
-            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart zonder gebouwen (HQ tiles)</title>
-            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
-        </metadata>
-        <source>osm-nb-hq</source>
-        <cache>disk</cache>
-        <format>PNG</format>
-        <grid>rd-hq</grid>
-        <expires>3600</expires>
-	<metatile>4 4</metatile>
-        <metabuffer>10</metabuffer>
     </tileset>
     <tileset name="osm-nbr-hq">
         <metadata>
-            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart zonder gebouwen en wegen (HQ tiles)</title>
-            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+            <title>Openbasiskaart zonder gebouwen en wegen 2x-dpi</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, https://www.openstreetmap.org/copyright). Visuele stijl: https://github.com/MapServer/basemaps. https://www.openbasiskaart.nl/ wordt gehost door https://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
         </metadata>
         <source>osm-nbr-hq</source>
         <cache>disk</cache>
@@ -210,49 +227,30 @@
     </tileset>    
     <tileset name="osm-epsg3857">
         <metadata>
-            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart (EPSG:3857)</title>
-            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+            <title>Openbasiskaart</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, https://www.openstreetmap.org/copyright). Visuele stijl: https://github.com/MapServer/basemaps. https://www.openbasiskaart.nl/ wordt gehost door https://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
         </metadata>
         <source>osm-epsg3857</source>
         <cache>disk</cache>
         <format>PNG</format>
         <grid>epsg3857</grid>
         <expires>3600</expires>
-	<metatile>4 4</metatile>
-        <metabuffer>10</metabuffer>
-    </tileset>       
-    <tileset name="osm-g">
-	<metadata>
-            <title>openbasiskaart.nl: OpenStreetMap ondergrondkaart (Google Maps Compatible)</title>
-            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, http://www.openstreetmap.org/copyright). Visuele stijl op basis van MapServer basemaps: http://github.com/opengeogroep/basemaps/tree/openbasiskaart-6-2. http://www.openbasiskaart.nl/ is powered by http://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
-        </metadata>
-        <source>osm-epsg3857</source>
-	<cache>disk</cache>
-        <format>PNG</format>
-	<grid>g</grid>
-	<expires>3600</expires>
         <metatile>4 4</metatile>
         <metabuffer>10</metabuffer>
     </tileset>
-
-    <default_format>PNG</default_format>
-
-    <metadata>
-        <title>Openbasiskaart</title>
-    </metadata>
-    <service type="wms" enabled="true">
-        <full_wms>assemble</full_wms>
-        <resample_mode>bilinear</resample_mode>
+    <!-- TODO alias/verwijderen / web mercator -->
+    <tileset name="osm-g">
+        <metadata>
+            <title>Openbasiskaart</title>
+            <abstract>Basiskaart op basis van OpenStreetMap data (map data copyright OpenStreetMap contributors, https://www.openstreetmap.org/copyright). Visuele stijl: https://github.com/MapServer/basemaps. https://www.openbasiskaart.nl/ wordt gehost door https://www.opengeogroep.nl/. Te gebruiken als fair-use "as-is", voor meer mogelijkheden neem contact op met info@opengeogroep.nl.</abstract>
+        </metadata>
+        <source>osm-epsg3857</source>
+        <cache>disk</cache>
         <format>PNG</format>
-        <maxsize>4096</maxsize>
-    </service>
-    <service type="wmts" enabled="true"/>
-    <service type="tms" enabled="true"/>
-    <service type="kml" enabled="false"/>
-    <service type="gmaps" enabled="false"/>
-    <service type="ve" enabled="false"/>
-    <service type="demo" enabled="true"/>
-    <errors>log</errors>
-    <lock_dir>/tmp</lock_dir>
+        <grid>g</grid>
+        <expires>3600</expires>
+        <metatile>4 4</metatile>
+        <metabuffer>10</metabuffer>
+    </tileset>
 </mapcache>
 
