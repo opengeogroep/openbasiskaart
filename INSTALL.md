@@ -3,19 +3,27 @@ Installatieinstructies Openbasiskaart
 
 Zoveel mogelijke automatische installatie en setup met cloud-init.
 
-Lokaal met bijvoorbeeld Multipass:
+**Installatie op een nieuwe VM**
+
+Lokaal nieuwe VM maken met bijvoorbeeld Multipass (werkt op alle OS'en):
 
 ```bash
-multipass launch -c 12 -d 20G -m 8G -n obk --mount .:/opt/openbasiskaart --cloud-init cloud-init.yaml 22.04
+multipass launch -c 12 -d 60G -m 8G -n obk --mount .:/opt/openbasiskaart --cloud-init cloud-init.yaml 22.04
 ```
 
-Hetzner:
+**Installatie op Linux container (LXC)**
+
+Een LXC gebruikt niet z'n eigen kernel dus performt beter.
+
+(TODO)
+
+**Installatie op een Hetzner VM**
 
 Let op: als je geen `--ssh-key` argument gebruikt, wordt er een root account gemaakt met verlopen wachtwoord. Dan kan
 door cloud-init niet postgresql worden geinstalleerd omdat geen postgres user account kan worden aangemaakt. Eventueel
 kan met cloud-init het wachtwoord op niet-verlopen worden gezet.
 
-```
+```bash
 hcloud server create \
     --type cx11 \
     --image ubuntu-22.04 \
@@ -24,15 +32,51 @@ hcloud server create \
     --user-data-from-file cloud-init.yaml
 ```
 
-Log hierna in op de server en controleer met `cloud-init status --long` of alles geinstalleerd is en check
-`/var/log/cloud-init-output.log`.
+Installatie
+===========
+
+Nadat je de VM met cloud-init hebt gestart, log in op de server en controleer met `cloud-init status --long` of alles 
+ge&iuml;nstalleerd is en check:
+
+```bash
+sudo less -S /var/log/cloud-init-output.log
+````
 
 Voer daarna uit:
 ```bash
 cd /opt/openbasiskaart
-sudo wget https://download.geofabrik.de/europe/netherlands-latest.osm.pbf
-sudo ./imposm-import.sh
+sudo ./install.sh
+sudo ./update.sh
+/opt/imposm-0.11.1-linux-x86-64/imposm run -config /opt/openbasiskaart/imposm/config.json
 ```
+
+TODO
+====
+
+- [ ] lxc/lxd
+- [ ] mapcache seed script extent werkt niet
+- [ ] certbot
+- [ ] deploy v3, eerst cron update dagelijks
+- [ ] mail smarthost
+- [ ] munin, goaccess
+
+Verbeteringen
+=============
+
+- [ ] Gebruik changes van elke minuut
+  - [ ] systemd service voor imposm run (herstart met 5m wacht bij fout?)
+  - [ ] mapcache max cache age of delete script (imposm updated tiles in EPSG:3857 of tijd)
+  - [ ] monitoring /var/opt/osm/imposm-cache/diff/last.state.txt
+  - [ ] website alias voor last.state.txt voor website
+  - [ ] elke week volledige import stop imposm-run, import, start imposm-run
+  - [ ] wacht met seeden wanneer imposm-run idle (last.state.txt age > 1m)
+- [ ] backup: kopieren van/naar extern, restore voor sneller online brengen server
+- [ ] PNG grootte optimalisatie door quantization (evt pngcrush)
+- [ ] http3: nginx met quiche of eigen quic lib met fastcgi mapcache
+- [ ] nginx met fastcgi mapserv voor source
+- [ ] Tabel osm_housenumbers niet gebruikt, weghalen uit mapping of styling toevoegen (BGT kan ook)
+- [ ] Aparte "light" mapping voor buiten NL
+- [ ] Extra stijlen
 
 TODO (oud)
 ==========

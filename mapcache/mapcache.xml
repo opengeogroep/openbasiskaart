@@ -173,6 +173,7 @@
         <metatile>4 4</metatile>
         <metabuffer>10</metabuffer>
     </tileset>
+<!--
     <tileset name="osm-nb">
         <metadata>
             <title>Openbasiskaart zonder gebouwen</title>
@@ -225,6 +226,7 @@
         <metatile>4 4</metatile>
         <metabuffer>10</metabuffer>
     </tileset>    
+-->
     <tileset name="osm-epsg3857">
         <metadata>
             <title>Openbasiskaart</title>

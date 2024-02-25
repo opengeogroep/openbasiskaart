@@ -24,7 +24,7 @@
     </Directory>
 
     # MapCache
-    MapCacheAlias /mapcache "/opt/openbasiskaart/mapcache.xml"
+    MapCacheAlias /mapcache "/opt/openbasiskaart/mapcache/mapcache.xml"
     <Directory /var/opt/mapcache/>
         Options +FollowSymLinks
         Require all granted

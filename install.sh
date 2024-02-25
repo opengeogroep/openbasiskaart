@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 DIR=/opt/openbasiskaart
 
@@ -8,7 +9,7 @@ ln -s $DIR/apache/openbasiskaart.inc /etc/apache2/openbasiskaart.inc
 sudo ln -s /usr/lib/cgi-bin/mapserv /usr/lib/cgi-bin/mapserv.fcgi
 
 mkdir -p /var/opt/mapcache
-chown www-data:www:data /var/opt/mapcache
+mkdir -p /var/opt/osm/imposm-cache/diff
 
 a2dissite 000-default
 a2ensite openbasiskaart
@@ -25,7 +26,6 @@ su postgres -c "psql osm -c 'create extension pg_prewarm'"
 wget https://github.com/omniscale/imposm3/releases/download/v0.11.1/imposm-0.11.1-linux-x86-64.tar.gz
 tar -zx -C /opt -f imposm-0.11.1-linux-x86-64.tar.gz
 rm imposm*.tar.gz
-mkdir /var/opt/imposm-cache
 
 git clone https://github.com/MapServer/basemaps.git /opt/basemaps
 cd /opt/basemaps
@@ -35,4 +35,6 @@ export OSM_FORCE_POSTGIS_EXTENT=1
 make --always-make
 make data
 
+# TODO
+#echo "..." >> /etc/crontab
 

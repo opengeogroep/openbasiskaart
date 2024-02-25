@@ -19,6 +19,7 @@ packages:
   - make
   - unzip
   - gcc
+  - zstd
 
 package_update: true
 package_upgrade: true
@@ -45,6 +46,6 @@ users:
     ssh_import_id:
       - gh:matthijsln
 
-runcmd:
+#runcmd:
 #  - git clone https://github.com/opengeogroep/openbasiskaart.git /opt/openbasiskaart
-  - /opt/openbasiskaart/install.sh
+#  - /opt/openbasiskaart/install.sh
