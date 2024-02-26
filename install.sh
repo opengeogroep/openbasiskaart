@@ -13,8 +13,6 @@ mkdir -p /var/opt/osm/imposm-cache/diff
 
 a2dissite 000-default
 a2ensite openbasiskaart
-# todo certbot
-# a2ensite openbasiskaart-ssl
 a2enmod headers cgid ssl http2
 systemctl restart apache2
 

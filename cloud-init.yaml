@@ -20,6 +20,7 @@ packages:
   - unzip
   - gcc
   - zstd
+  - snapd
 
 package_update: true
 package_upgrade: true
@@ -46,6 +47,10 @@ users:
     ssh_import_id:
       - gh:matthijsln
 
-#runcmd:
-#  - git clone https://github.com/opengeogroep/openbasiskaart.git /opt/openbasiskaart
-#  - /opt/openbasiskaart/install.sh
+runcmd:
+  - snap install --classic certbot
+  - ln -s /snap/bin/certbot /usr/bin/certbot
+  - git clone https://github.com/opengeogroep/openbasiskaart.git /opt/openbasiskaart
+  - cd /opt/openbasiskaart
+  - git checkout v3
+  - ./install.sh

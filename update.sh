@@ -21,7 +21,7 @@ curl --silent --fail --max-time 3600 --retry 3 --retry-delay 1 \
 
 if [[ $? -ne 0 ]]; then
   echo "Failed to download from $PBF_URL: `cat /tmp/curl-stderr`"
-  quit 1
+  exit 1
 fi
 
 CURL_STDOUT=`cat /tmp/curl-stdout`

@@ -1,6 +1,6 @@
     ServerAdmin webmaster@opengeogroep.nl
     ServerName v3.openbasiskaart.nl
-    #ServerAlias www.openbasiskaart.nl openbasiskaart.b3p.nl
+    #ServerAlias www.openbasiskaart.nl
 
     Protocols h2 http/1.1
 

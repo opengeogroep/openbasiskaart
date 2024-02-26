@@ -45,9 +45,15 @@ sudo less -S /var/log/cloud-init-output.log
 Voer daarna uit:
 ```bash
 cd /opt/openbasiskaart
-sudo ./install.sh
 sudo ./update.sh
 /opt/imposm-0.11.1-linux-x86-64/imposm run -config /opt/openbasiskaart/imposm/config.json
+
+Voor SSL ondersteuning, maak het juiste DNS record aan, en:
+
+```bash
+sudo certbot certonly --agree-tos -m info@opengeogroep.nl -d v3.openbasiskaart.nl --apache --test-cert
+sudo a2ensite openbasiskaart-ssl
+sudo systemctl reload apache2
 ```
 
 TODO
@@ -59,6 +65,7 @@ TODO
 - [ ] deploy v3, eerst cron update dagelijks
 - [ ] mail smarthost
 - [ ] munin, goaccess
+- [ ] ccx23 160 GB schijf -> upgrade naar ccx33 of volume gebruiken
 
 Verbeteringen
 =============
@@ -77,6 +84,8 @@ Verbeteringen
 - [ ] Tabel osm_housenumbers niet gebruikt, weghalen uit mapping of styling toevoegen (BGT kan ook)
 - [ ] Aparte "light" mapping voor buiten NL
 - [ ] Extra stijlen
+- [ ] osm-g en osm-epsg3857 alias, nu dubbele tiles
+- [ ] arm64 server (hetzner alleen shared cpu)
 
 TODO (oud)
 ==========
