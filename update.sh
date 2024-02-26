@@ -6,10 +6,11 @@ PBF_URL=https://download.geofabrik.de/europe/netherlands/utrecht-latest.osm.pbf
 PBF=/var/opt/osm/${PBF_URL##*/}
 ENABLE_BACKUP=true
 
-if [ -s $PBF ]; then
+if [[ -f ${PBF}.last ]]; then
   TIME_COND="--time-cond $PBF"
 fi
 rm /tmp/curl* 2> /dev/null
+rm ${PBF}.last 2> /dev/null
 echo Downloading ${PBF_URL}...
 curl --silent --fail --max-time 3600 --retry 3 --retry-delay 1 \
   --output $PBF \
@@ -36,6 +37,7 @@ elif [[ $HTTP_CODE -ne 200 ]]; then
   exit 1
 fi
 
+set -e
 echo Downloaded new OSM PBF data, starting import at `date`...
 
 IMPOSM=`find /opt -type f -executable -name imposm`
@@ -48,6 +50,9 @@ $IMPOSM import  \
   -optimize \
   -deployproduction
 $IMPOSM import -config /opt/openbasiskaart/imposm/config.json -removebackup
+# Save diskspace by only keeping file with last-modified date of PBF for conditional HTTP request
+touch --reference ${PBF} ${PBF}.last
+rm ${PBF}
 
 if [[ $ENABLE_BACKUP == "true" ]]; then
   echo Creating database backup...

@@ -3,7 +3,8 @@
 apt:
   sources:
     ubuntugis:
-      source: "ppa:ubuntugis/ubuntugis-unstable"
+      # mapcache_seed from unstable PPA 1.14.0-2~jammy0 segfaults when using -d argument to seed extent from datasource
+      source: "ppa:ubuntugis/ppa"
 
 packages:
   - glances

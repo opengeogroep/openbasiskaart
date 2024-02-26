@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MAPCACHE=/opt/openbasiskaart/mapcache/
-THREADS=8
+THREADS=6
 cd /var/opt/mapcache
 
 echo Removing old tiles...
@@ -21,20 +21,28 @@ function seed() {
   local grid=$2
   local levels=$3
 
-  # TODO: seed extent werkt niet: -d $MAPCACHE/seed_extent.shp
+  local tiles_dir=/var/opt/mapcache/$tileset
+  mkdir -p $tiles_dir; chown www-data:www-data $tiles_dir
+  local size_before=`du -s --block-size=1 $tiles_dir | cut -f 1`
   echo Seeding tileset ${tileset} levels ${levels}...
-  /usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c $MAPCACHE/mapcache.xml -t $tileset -g $grid -z $levels -n $THREADS"
+  # mapcache_seed from unstable PPA 1.14.0-2~jammy0 segfaults when using -d argument to seed extent from datasource
+  /usr/bin/time -f "Time: %E" su www-data -s /bin/bash -c "mapcache_seed -c $MAPCACHE/mapcache.xml --non-interactive -t $tileset -g $grid -z $levels -d $MAPCACHE/seed_extent.shp -n $THREADS | tail -n 1"
+  local size_after=`du -s --block-size=1 $tiles_dir | cut -f 1`
+  echo -n "Seed disk usage increase: "
+  echo $((size_after - size_before)) | numfmt --to=iec
 }
 
 # Seed levels 10 and 11 separately to monitor speed
 
-seed osm rd 0,8
-#seed osm rd 10,10
-#seed osm rd 11,11
+seed osm rd 0,9
+seed osm rd 10,10
+seed osm rd 11,11
 
-seed osm-g g 0,6
+seed osm-g g 0,9
 
-seed osm-hq rd-hq 0,6
-#seed osm-hq rd-hq 10,10
-#seed osm-hq rd-hq 11,11 # space: x G
+seed osm-hq rd-hq 0,9
+seed osm-hq rd-hq 10,10
+seed osm-hq rd-hq 11,11
+
+df -h /var/opt/mapcache
 

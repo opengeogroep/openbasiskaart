@@ -60,12 +60,10 @@ TODO
 ====
 
 - [ ] lxc/lxd
-- [ ] mapcache seed script extent werkt niet
-- [ ] certbot
-- [ ] deploy v3, eerst cron update dagelijks
+- [ ] cron update dagelijks of imposm run
 - [ ] mail smarthost
 - [ ] munin, goaccess
-- [ ] ccx23 160 GB schijf -> upgrade naar ccx33 of volume gebruiken
+- [ ] ccx23 160 GB schijfruimte check: upgrade naar ccx33 of volume gebruiken
 
 Verbeteringen
 =============
@@ -86,6 +84,9 @@ Verbeteringen
 - [ ] Extra stijlen
 - [ ] osm-g en osm-epsg3857 alias, nu dubbele tiles
 - [ ] arm64 server (hetzner alleen shared cpu)
+- [ ] Beperken schijfruimte, pbf niet meer nodig (alleen time-cond...)
+- [ ] Beperken systemd log size
+- [ ] Clean apt cache
 
 TODO (oud)
 ==========
