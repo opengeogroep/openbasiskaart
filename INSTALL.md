@@ -59,6 +59,7 @@ sudo systemctl reload apache2
 TODO
 ====
 
+- [ ] Deelstaten Duitsland
 - [ ] lxc/lxd
 - [ ] cron update dagelijks of imposm run
 - [ ] mail smarthost
