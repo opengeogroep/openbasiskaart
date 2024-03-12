@@ -13,7 +13,7 @@ multipass launch -c 12 -d 60G -m 8G -n obk --mount .:/opt/openbasiskaart --cloud
 
 **Installatie op Linux container (LXC)**
 
-Een Linux container (lxc) kan beter performen dan multipass.
+Een Linux container (lxc) kan beter performen dan multipass. Werkt ook multi-platform.
 
 Let op dat (maart 2024) niet alle images de cloud-init uitvoeren en blijven hangen op de "running" status, en met de 
 laatste versie de images van de `images:` remote (van https://images.linuxcontainers.org) niet werken met de laatste 
@@ -23,7 +23,8 @@ Voorlopig werkt de "ubuntu-minimal:jammy" image wel.
 
 ```bash
 lxc launch ubuntu-minimal:jammy obk --config=user.user-data="$(cat cloud-init.yaml)"
-lxc exec x -- bash -c "cloud-init status --wait"
+lxc exec obk -- bash -c "cloud-init status --wait"
+lxc exec obk -- bash -c "tail -f /var/log/cloud-init-output.log"
 ```
 
 **Verbinding maken met PostgreSQL database**
@@ -35,26 +36,23 @@ dat iedereen mag verbinden door bijvoorbeeld het netmask `127.0.0.1/32` te verva
 
 **Lokale PBF's gebruiken**
 
-Download eerst de PBF's op je eigen systeem:
+Door het updaten van packages en downloaden van shapefiles is het nodig een snelle internetverbinding te hebben, er 
+wordt >1 GB gedownload. Het is wel mogelijk al gedownloade PBF bestanden te hergebruiken:
+
+Maak een mounts van een lokale "pbf" directory naar `/var/opt/osm/pbf` in de VM/container. De PBF-bestanden die de eerste
+keer bij het uitvoeren van het update.sh script worden gedownload blijven staan en worden niet gedownload als ze al 
+bestaan bij het opnieuw aanmaken van de VM/container.
+
+Na het starten van de VM/container en voor het uitvoeren van het update.sh script:
 
 ```bash
-mkdir pbf; cd pbf
-wget https://download.geofabrik.de/europe/netherlands-latest.osm.pbf
-wget https://download.geofabrik.de/europe/belgium-latest.osm.pbf
-wget https://download.geofabrik.de/europe/germany/nordrhein-westfalen-latest.osm.pbf
-wget https://download.geofabrik.de/europe/germany/niedersachsen-latest.osm.pbf
-cd ..
+mkdir pbf
+multipass mount ./pbf obk:/var/opt/osm/pbf
 ```
 
-Maak een mapping van je lokale `pbf` directory naar `/var/opt/osm/` in de VM/container, dus bijvoorbeeld:
-
 ```bash
-multipass mount ./pbf obk:/var/opt/osm
-```
-of bij starten als extra optie `multipass launch ... --mount ./pbf:/var/opt/osm`. Met LXC:
-
-```bash
-lxc config device add obk pbfs disk source=$(pwd)/pbf path=/opt/my-pbfs
+mkdir pbf
+lxc config device add obk pbf disk source=$(pwd)/pbf path=/var/opt/osm/pbf
 ```
 
 Geef bij het starten van het update.sh script een extra argument om ook bij ongewijzigde PBF-bestanden deze te laden:

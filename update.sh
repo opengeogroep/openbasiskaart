@@ -11,7 +11,7 @@ NEW_PBF=${1:-0}
 
 function download_if_newer() {
   local PBF_URL=$1
-  local PBF=/var/opt/osm/${PBF_URL##*/}
+  local PBF=/var/opt/osm/pbf/${PBF_URL##*/}
 
   local TIME_COND=
   if [[ -f ${PBF} ]]; then
@@ -62,7 +62,7 @@ IMPOSM=`find /opt -type f -executable -name imposm`
 FIRST=1
 
 while read PBF_URL; do
-  PBF=/var/opt/osm/${PBF_URL##*/}
+  PBF=/var/opt/osm/pbf/${PBF_URL##*/}
   if [[ "$FIRST" -eq "1" ]]; then
     CACHE_MODE=-overwritecache
     FIRST=0

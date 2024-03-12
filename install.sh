@@ -10,6 +10,7 @@ sudo ln -s /usr/lib/cgi-bin/mapserv /usr/lib/cgi-bin/mapserv.fcgi
 
 mkdir -p /var/opt/mapcache
 mkdir -p /var/opt/osm/imposm-cache/diff
+mkdir -p /var/opt/osm/pbf
 
 a2dissite 000-default
 a2ensite openbasiskaart
