@@ -13,9 +13,60 @@ multipass launch -c 12 -d 60G -m 8G -n obk --mount .:/opt/openbasiskaart --cloud
 
 **Installatie op Linux container (LXC)**
 
-Een LXC gebruikt niet z'n eigen kernel dus performt beter.
+Een Linux container (lxc) kan beter performen dan multipass.
 
-(TODO)
+Let op dat (maart 2024) niet alle images de cloud-init uitvoeren en blijven hangen op de "running" status, en met de 
+laatste versie de images van de `images:` remote (van https://images.linuxcontainers.org) niet werken met de laatste 
+snap versie van lxd.
+
+Voorlopig werkt de "ubuntu-minimal:jammy" image wel.
+
+```bash
+lxc launch ubuntu-minimal:jammy obk --config=user.user-data="$(cat cloud-init.yaml)"
+lxc exec x -- bash -c "cloud-init status --wait"
+```
+
+**Verbinding maken met PostgreSQL database**
+
+Als je voor ontwikkeling wil verbinden met de PostgreSQL database draaiend in een VM of container, zet in 
+`/etc/postgresql/14/main/postgresql.conf` de regel `listen_addresses = '*'` en in `/etc/postgresql/14/main/pg_hba.conf`
+dat iedereen mag verbinden door bijvoorbeeld het netmask `127.0.0.1/32` te vervangen door `127.0.0.1/0` en met
+`systemctl restart postgresql` PostgreSQL te herstarten.
+
+**Lokale PBF's gebruiken**
+
+Download eerst de PBF's op je eigen systeem:
+
+```bash
+mkdir pbf; cd pbf
+wget https://download.geofabrik.de/europe/netherlands-latest.osm.pbf
+wget https://download.geofabrik.de/europe/belgium-latest.osm.pbf
+wget https://download.geofabrik.de/europe/germany/nordrhein-westfalen-latest.osm.pbf
+wget https://download.geofabrik.de/europe/germany/niedersachsen-latest.osm.pbf
+cd ..
+```
+
+Maak een mapping van je lokale `pbf` directory naar `/var/opt/osm/` in de VM/container, dus bijvoorbeeld:
+
+```bash
+multipass mount ./pbf obk:/var/opt/osm
+```
+of bij starten als extra optie `multipass launch ... --mount ./pbf:/var/opt/osm`. Met LXC:
+
+```bash
+lxc config device add obk pbfs disk source=$(pwd)/pbf path=/opt/my-pbfs
+```
+
+Geef bij het starten van het update.sh script een extra argument om ook bij ongewijzigde PBF-bestanden deze te laden:
+
+```bash
+/opt/openbasiskaart/update.sh 1
+```
+
+**Gebruik van de database dump**
+
+Tijdens het update script wordt ook een database dump gemaakt, deze kan je met `pg_restore` herstellen nadat je deze met
+`zstdmt` hebt gedecomprimeerd.
 
 **Installatie op een Hetzner VM**
 
@@ -59,8 +110,6 @@ sudo systemctl reload apache2
 TODO
 ====
 
-- [ ] Deelstaten Duitsland
-- [ ] lxc/lxd
 - [ ] cron update dagelijks of imposm run
 - [ ] mail smarthost
 - [ ] munin, goaccess

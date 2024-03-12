@@ -7,7 +7,7 @@ https://download.geofabrik.de/europe/belgium-latest.osm.pbf
 https://download.geofabrik.de/europe/germany/nordrhein-westfalen-latest.osm.pbf
 https://download.geofabrik.de/europe/germany/niedersachsen-latest.osm.pbf"
 
-NEW_PBF=0
+NEW_PBF=${1:-0}
 
 function download_if_newer() {
   local PBF_URL=$1
