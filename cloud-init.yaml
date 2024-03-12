@@ -7,6 +7,8 @@ apt:
       source: "ppa:ubuntugis/ppa"
 
 packages:
+  - git
+  - time
   - glances
   - nala
   - postgresql-14
