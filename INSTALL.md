@@ -1,89 +1,149 @@
-Installatieinstructies Openbasiskaart (Ubuntu 18.04)
-====================================================
+Installatieinstructies Openbasiskaart
+=====================================
+
+Zoveel mogelijke automatische installatie en setup met cloud-init.
+
+**Installatie op een nieuwe VM**
+
+Lokaal nieuwe VM maken met bijvoorbeeld Multipass (werkt op alle OS'en):
 
 ```bash
-git clone https://github.com/opengeogroep/openbasiskaart.git
-cd openbasiskaart
+multipass launch -c 12 -d 60G -m 8G -n obk --mount .:/opt/openbasiskaart --cloud-init cloud-init.yaml 22.04
+```
 
-# Installeren packages
-sudo apt-get install curl postgresql postgresql-10-postgis-2.4 postgresql-10-postgis-2.4-scripts apache2 libapache2-mod-fcgid libapache2-mod-mapcache mapcache-tools cgi-mapserver mapserver-bin imposm make unzip gcc
+**Installatie op Linux container (LXC)**
 
-# PostgreSQL tuning niet nodig, fsync=off maakt imposm --write niet sneller
+Een Linux container (lxc) kan beter performen dan multipass. Werkt ook multi-platform.
 
-DIR=`pwd`
+Let op dat (maart 2024) niet alle images de cloud-init uitvoeren en blijven hangen op de "running" status, en met de 
+laatste versie de images van de `images:` remote (van https://images.linuxcontainers.org) niet werken met de laatste 
+snap versie van lxd.
 
-Volgende commando's als root:
+Voorlopig werkt de "ubuntu-minimal:jammy" image wel.
 
-# Kopie van GitHub repo voor website
-git clone https://github.com/opengeogroep/openbasiskaart.git /var/www/openbasiskaart
-chown -R www-data:www-data /var/www/openbasiskaart
+```bash
+lxc launch ubuntu-minimal:jammy obk --config=user.user-data="$(cat cloud-init.yaml)"
+lxc exec obk -- bash -c "cloud-init status --wait"
+lxc exec obk -- bash -c "tail -f /var/log/cloud-init-output.log"
+```
 
-# Kopieer github update hook (zie settings openbasiskaart GitHub repo)
-cp $DIR/github-update-site-webhook.sh /usr/lib/cgi-bin
+**Verbinding maken met PostgreSQL database**
 
-# Link configuratiebestanden
-ln -s $DIR/apache/openbasiskaart.conf /etc/apache2/sites-available/openbasiskaart.conf
-ln -s $DIR/apache/openbasiskaart-ssl.conf /etc/apache2/sites-available/openbasiskaart-ssl.conf
-ln -s $DIR/apache/openbasiskaart.inc /etc/apache2/openbasiskaart.inc
-cd /usr/lib/cgi-bin; sudo ln -s mapserv mapserv.fcgi
-# Maak eventueel /mnt/data een apart volume
-mkdir -p /mnt/data/mapcache
-ln -s $DIR/mapcache.xml /mnt/data/mapcache
+Als je voor ontwikkeling wil verbinden met de PostgreSQL database draaiend in een VM of container, zet in 
+`/etc/postgresql/14/main/postgresql.conf` de regel `listen_addresses = '*'` en in `/etc/postgresql/14/main/pg_hba.conf`
+dat iedereen mag verbinden door bijvoorbeeld het netmask `127.0.0.1/32` te vervangen door `127.0.0.1/0` en met
+`systemctl restart postgresql` PostgreSQL te herstarten.
 
-# Maken loop devices voor snel switchen tiles
-# LET OP: met ssd niet nodig, met beperkte schijfruimte alleen maar lastig
-# LET OP: bij verwijderen loop devices deze uit /etc/fstab verwijderen, anders boot systeem niet door
-cd /mnt/data/mapcache
-dd if=/dev/zero of=tiles_a.img bs=1024M count=30
-dd if=/dev/zero of=tiles_b.img bs=1024M count=30
-losetup -fP tiles_a.img
-losetup -fP tiles_b.img
-mkfs.ext4 -F -T news -m 0 -q -O ^has_journal /dev/loop0
-mkfs.ext4 -F -T news -m 0 -q -O ^has_journal /dev/loop1
-mkdir a b
-ln -s a current
-chown -R www-data:www-data current/
-cat >> /etc/fstab <<'EOF'
-/dev/loop0      /mnt/data/mapcache/a    ext4    rw,noatime,barrier=0       0       0
-/dev/loop1      /mnt/data/mapcache/b    ext4    rw,noatime,barrier=0       0       0
-EOF
-mount a b
+**Lokale PBF's gebruiken**
 
-# Disk usage van sparse file van loop device met 'discarded' blocks bekijken met 'ls -lhs'
-# Vergroten van loop device /dev/loop0 gemount op /mnt/data/mapcache/a (kan gemount blijven):
-# dd if=/dev/zero of=tiles_a.img bs=1024M count=10 conv=notrunc oflag=append
-# losetup -c /dev/loop0
-# resize2fs /dev/loop0
-# fstrim /mnt/data/mapcache/a
+Door het updaten van packages en downloaden van shapefiles is het nodig een snelle internetverbinding te hebben, er 
+wordt >1 GB gedownload. Het is wel mogelijk al gedownloade PBF bestanden te hergebruiken:
 
-# ServerAlias is globaal ingesteld in openbasiskaart.conf (om warning bij herstart te vermijden), 
-# daarom moet 000-default moet gedisabled worden
+Maak een mounts van een lokale "pbf" directory naar `/var/opt/osm/pbf` in de VM/container. De PBF-bestanden die de eerste
+keer bij het uitvoeren van het update.sh script worden gedownload blijven staan en worden niet gedownload als ze al 
+bestaan bij het opnieuw aanmaken van de VM/container.
 
-# Let op: voor LetsEncrypt alleen openbasiskaart vhost enablen, niet SSL. Daarna LetsEncrypt
-# Apache plugin z'n werk laten doen.
+Na het starten van de VM/container en voor het uitvoeren van het update.sh script:
 
-a2dissite 000-default
-a2ensite openbasiskaart openbasiskaart-ssl
-a2enmod headers cgid ssl http2
-service apache2 restart
+```bash
+mkdir pbf
+multipass mount ./pbf obk:/var/opt/osm/pbf
+```
 
+```bash
+mkdir pbf
+lxc config device add obk pbf disk source=$(pwd)/pbf path=/var/opt/osm/pbf
+```
+
+Geef bij het starten van het update.sh script een extra argument om ook bij ongewijzigde PBF-bestanden deze te laden:
+
+```bash
+/opt/openbasiskaart/update.sh 1
+```
+
+**Gebruik van de database dump**
+
+Tijdens het update script wordt ook een database dump gemaakt, deze kan je met `pg_restore` herstellen nadat je deze met
+`zstdmt` hebt gedecomprimeerd.
+
+**Installatie op een Hetzner VM**
+
+Let op: als je geen `--ssh-key` argument gebruikt, wordt er een root account gemaakt met verlopen wachtwoord. Dan kan
+door cloud-init niet postgresql worden geinstalleerd omdat geen postgres user account kan worden aangemaakt. Eventueel
+kan met cloud-init het wachtwoord op niet-verlopen worden gezet.
+
+```bash
+hcloud server create \
+    --type cx11 \
+    --image ubuntu-22.04 \
+    --name openbasiskaart-v3 \
+    --ssh-key matthijsln@b3p-matthijs \
+    --user-data-from-file cloud-init.yaml
+```
+
+Installatie
+===========
+
+Nadat je de VM met cloud-init hebt gestart, log in op de server en controleer met `cloud-init status --long` of alles 
+ge&iuml;nstalleerd is en check:
+
+```bash
+sudo less -S /var/log/cloud-init-output.log
+````
+
+Voer daarna uit:
+```bash
+cd /opt/openbasiskaart
+sudo ./update.sh
+/opt/imposm-0.11.1-linux-x86-64/imposm run -config /opt/openbasiskaart/imposm/config.json
+
+Voor SSL ondersteuning, maak het juiste DNS record aan, en:
+
+```bash
+sudo certbot certonly --agree-tos -m info@opengeogroep.nl -d v3.openbasiskaart.nl --apache --test-cert
+sudo a2ensite openbasiskaart-ssl
+sudo systemctl reload apache2
+```
+
+TODO
+====
+
+- [ ] cron update dagelijks of imposm run
+- [ ] mail smarthost
+- [ ] munin, goaccess
+- [ ] ccx23 160 GB schijfruimte check: upgrade naar ccx33 of volume gebruiken
+
+Verbeteringen
+=============
+
+- [ ] Gebruik changes van elke minuut
+  - [ ] systemd service voor imposm run (herstart met 5m wacht bij fout?)
+  - [ ] mapcache max cache age of delete script (imposm updated tiles in EPSG:3857 of tijd)
+  - [ ] monitoring /var/opt/osm/imposm-cache/diff/last.state.txt
+  - [ ] website alias voor last.state.txt voor website
+  - [ ] elke week volledige import stop imposm-run, import, start imposm-run
+  - [ ] wacht met seeden wanneer imposm-run idle (last.state.txt age > 1m)
+- [ ] backup: kopieren van/naar extern, restore voor sneller online brengen server
+- [ ] PNG grootte optimalisatie door quantization (evt pngcrush)
+- [ ] http3: nginx met quiche of eigen quic lib met fastcgi mapcache
+- [ ] nginx met fastcgi mapserv voor source
+- [ ] Tabel osm_housenumbers niet gebruikt, weghalen uit mapping of styling toevoegen (BGT kan ook)
+- [ ] Aparte "light" mapping voor buiten NL
+- [ ] Extra stijlen
+- [ ] osm-g en osm-epsg3857 alias, nu dubbele tiles
+- [ ] arm64 server (hetzner alleen shared cpu)
+- [ ] Beperken schijfruimte, pbf niet meer nodig (alleen time-cond...)
+- [ ] Beperken systemd log size
+- [ ] Clean apt cache
+
+TODO (oud)
+==========
+```
 # Let op! Vanwege schijnbare memory leak in mod_mapcache in /etc/apache2/mods-enabled/mpm_event.conf:
 # MaxConnectionsPerChild   2000
+```
 
-su - postgres -c "createuser osm"
-su - postgres -c "psql -c \"alter role osm password 'osm'\""
-su - postgres -c "createdb --owner=osm osm"
-su - postgres -c "psql osm -c 'create extension postgis'"
-su - postgres -c "psql osm -c 'create extension pg_prewarm'"
-
-# gebruik Ubuntu imposm package; is up-to-date
-#pip install  https://github.com/omniscale/imposm/tarball/master
-#pip install https://github.com/omniscale/imposm/tarball/master
-
-cd /opt
-git clone https://github.com/mapserver/basemaps.git 
-cd basemaps; make data
-
+```
 # patch voor nb stijl
 # patch voor EXTENT bij elke LAYER, omdat anders GetCap ST_Extent() doet met deze warnings:
 # landuse4/landuse5: WARNING: Optional Ex_GeographicBoundingBox could not be established for this layer.  Consider setting the EXTENT in the LAYER object, or wms_extent metadata. Also check that your data exists in the DATA statement

@@ -1,0 +1,59 @@
+#cloud-config
+
+apt:
+  sources:
+    ubuntugis:
+      # mapcache_seed from unstable PPA 1.14.0-2~jammy0 segfaults when using -d argument to seed extent from datasource
+      source: "ppa:ubuntugis/ppa"
+
+packages:
+  - git
+  - time
+  - glances
+  - nala
+  - postgresql-14
+  - postgresql-14-postgis-3
+  - apache2
+  - libapache2-mod-fcgid
+  - libapache2-mod-mapcache
+  - mapcache-tools
+  - cgi-mapserver
+  - mapserver-bin
+  - make
+  - unzip
+  - gcc
+  - zstd
+  - snapd
+
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+
+ssh_pwauth: false
+disable_root: true
+
+# Alleen nodig bij Hetzner als geen ssh-keys zijn toegevoegd. Dan wordt root wachtwoord expired ingesteld, en
+# kan geen postgres user worden aangemaakt bij installeren packages door cloud-init
+#chpasswd:
+#  expire: false
+#  users:
+#    - name: root
+
+users:
+  - default
+  - name: matthijsln
+    gecos: Matthijs Laan
+    shell: /bin/bash
+    groups:
+      - users
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_import_id:
+      - gh:matthijsln
+
+runcmd:
+  - snap install --classic certbot
+  - ln -s /snap/bin/certbot /usr/bin/certbot
+  - git clone https://github.com/opengeogroep/openbasiskaart.git /opt/openbasiskaart
+  - cd /opt/openbasiskaart
+  - git checkout v3
+  - ./install.sh

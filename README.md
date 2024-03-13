@@ -1,14 +1,11 @@
-openbasiskaart
+Openbasiskaart
 ==============
 
-OpenBasisKaart Nederland (OBKN) is een project van de OpenGeoGroep met als doel het maken en publiek ter beschikking stellen
-van OpenStreetMap (OSM) en andere kaarten in de Nederlandse Rijks Driehoeks projectie (RD, EPSG:28992).
+Dit zijn installatiescripts waarmee de [Openbasiskaart](https://www.openbasiskaart.nl) kan worden gehosten. Zie 
+[INSTALL.md] voor de installatie-instructies.
 
-Zie meer details in de documentatie: http://doc.openbasiskaart.nl. Of als PDF:
-https://media.readthedocs.org/pdf/openbasiskaart/latest/openbasiskaart.pdf.
-
-De OBKN website is http://openbasiskaart.nl
-
-
-
-
+Dit is een project van de [OpenGeoGroep](https://www.opengeogroep.nl) om een open source publieke service ter
+beschikking te stellen van [OpenStreetMap](https://www.openstreetmap.org) gevisualiseerd in het Rijksdriehoekstelsel
+(EPSG:28992) en Web Mercator (EPSG:28992) met de visuele stijl van 
+[MapServer basemaps](https://github.com/MapServer/basemaps) die vooral geschikt is als rustige achtergrondkaart om 
+andere kaartlagen overheen te projecteren.

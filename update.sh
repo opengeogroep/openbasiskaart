@@ -1,82 +1,100 @@
 #!/bin/bash
-# sudo apt-get install realpath curl
 
-PBF_URL=http://download.geofabrik.de/europe-latest.osm.pbf
-PBF_DIR=/mnt/data/osm
-PBF=europe-latest.osm.pbf
+ENABLE_BACKUP=true
 
-BASEPATH=`realpath $(dirname $0)`
-CURL_STDERR=/tmp/curl-stderr
+PBF_URLS="https://download.geofabrik.de/europe/netherlands-latest.osm.pbf
+https://download.geofabrik.de/europe/belgium-latest.osm.pbf
+https://download.geofabrik.de/europe/germany/nordrhein-westfalen-latest.osm.pbf
+https://download.geofabrik.de/europe/germany/niedersachsen-latest.osm.pbf"
 
-function quit() {
-  cd $(dirname $0)
-  exit $1
-}
+NEW_PBF=${1:-0}
 
-# Download PBF if updated
+function download_if_newer() {
+  local PBF_URL=$1
+  local PBF=/var/opt/osm/pbf/${PBF_URL##*/}
 
-# Use after curl command, use --stderr $CURL_STDERR option with curl
-function check_curl_fail() {
-  local CURL_EXIT_CODE=$?
-  local MESSAGE=$1
-  CURL_OUTPUT=`cat $CURL_STDERR`
-  if [ $CURL_EXIT_CODE -ne 0 ]; then
-    echo $1: $CURL_OUTPUT
-    cat $STATUS_FILE
-    quit 1
+  local TIME_COND=
+  if [[ -f ${PBF} ]]; then
+    TIME_COND="--time-cond $PBF"
   fi
+  rm /tmp/curl* 2> /dev/null
+  echo Downloading ${PBF_URL}...
+  curl --silent --fail --max-time 3600 --retry 3 --retry-delay 1 \
+    --output $PBF \
+    --remote-time \
+    --show-error \
+    --write-out "HTTP code: %{http_code}, downloaded %{size_download} bytes at %{speed_download} bytes/s in %{time_total} s." \
+    $TIME_COND \
+    --location $PBF_URL > /tmp/curl-stdout 2> /tmp/curl-stderr
+
+  if [[ $? -ne 0 ]]; then
+    echo "Failed to download from $PBF_URL: `cat /tmp/curl-stderr`"
+    exit 1
+  fi
+
+  CURL_STDOUT=`cat /tmp/curl-stdout`
+  echo $CURL_STDOUT
+  [[ $CURL_STDOUT =~ HTTP\ code:\ ([0-9]*) ]] && HTTP_CODE=${BASH_REMATCH[1]}
+
+  # Quit when PBF is not modified
+  if [[ $HTTP_CODE -eq 304 ]]; then
+    return 0
+  elif [[ $HTTP_CODE -ne 200 ]]; then
+    echo "HTTP download failed, abort"
+    exit 1
+  fi
+  NEW_PBF=1
 }
 
-mkdir $PBF_DIR 2>/dev/null
-cd $PBF_DIR
+while read PBF_URL; do
+  download_if_newer $PBF_URL
+done <<< "$PBF_URLS"
 
-TIME_COND=
-if [ -s $PBF ]; then
-  TIME_COND="--time-cond $PBF_DIR/$PBF"
-fi
-rm /tmp/curl* 2> /dev/null
-curl --fail -s \
- --max-time 3600 \
- --retry 3 \
- --retry-delay 1 \
- --output $PBF_DIR/$PBF \
- --remote-time \
- --show-error \
- --stderr $CURL_STDERR \
- --write-out "HTTP code: %{http_code}, downloaded %{size_download} bytes at %{speed_download} bytes/s in %{time_total} s." \
- $TIME_COND \
- --location \
- $PBF_URL > /tmp/curl-stdout
-check_curl_fail "Failed to download from $PBF_URL"
-
-CURL_STDOUT=`cat /tmp/curl-stdout`
-
-[[ $CURL_STDOUT =~ HTTP\ code:\ ([0-9]*) ]] && HTTP_CODE=${BASH_REMATCH[1]}
-
-# Wanneer geen nieuwe file gedownload met HTTP status 200 dan quit
-
-if [[ $HTTP_CODE -eq 304 ]]; then
-  quit 0
-elif [[ $HTTP_CODE -ne 200 ]]; then
-  echo HTTP status code niet 200 of 304\: $HTTP_CODE, $CURL_STDOUT
-  quit 1
+# Quit when no PBF is modified
+if [[ "$NEW_PBF" -eq "0" ]]; then
+  exit 0
 fi
 
-echo Nieuwe OSM PBF data gedownload\!
-echo
-echo Starten update Openbasiskaart om `date`...
-cd $PBF_DIR
-rm *.cache 2>/dev/null
 set -e
-echo Uitvoeren Imposm...
-imposm --quiet --mapping-file=/opt/basemaps/imposm-mapping.py -d osm --remove-backup-tables
-imposm --quiet --mapping-file=/opt/basemaps/imposm-mapping.py --table-prefix=osm_import_ -d osm --proj=EPSG:28992 --limit-to=$BASEPATH/imposm/imposm_limit.shp -c 4 --read --write --optimize $PBF
-rm *.cache 2>/dev/null
-echo Maken databasedump...
-/usr/bin/time -f "Time: %E" su - postgres -c 'pg_dump -F c -t "osm_import_*" -d osm' > osm_import.backup
-echo Deployen nieuwe gegevens...
-$BASEPATH/deploy.sh
-echo
-echo Update script beeindigd op `date`
-quit 0
+echo Downloaded new OSM PBF data, starting import at `date`...
 
+IMPOSM=`find /opt -type f -executable -name imposm`
+FIRST=1
+
+while read PBF_URL; do
+  PBF=/var/opt/osm/pbf/${PBF_URL##*/}
+  if [[ "$FIRST" -eq "1" ]]; then
+    CACHE_MODE=-overwritecache
+    FIRST=0
+  else
+    CACHE_MODE=-appendcache
+  fi
+  $IMPOSM import  \
+    -config /opt/openbasiskaart/imposm/config.json \
+    -read $PBF \
+    $CACHE_MODE \
+    -diff
+done <<< "$PBF_URLS"
+
+$IMPOSM import \
+  -config /opt/openbasiskaart/imposm/config.json \
+  -write \
+  -optimize \
+  -deployproduction
+$IMPOSM import -config /opt/openbasiskaart/imposm/config.json -removebackup
+
+if [[ $ENABLE_BACKUP == "true" ]]; then
+  echo Creating database backup...
+  rm -rf /var/opt/osm/backup 2>/dev/null; mkdir /var/opt/osm/backup; chown postgres:postgres /var/opt/osm/backup
+  # --compress=zstd not available in postgres 14 yet
+  /usr/bin/time -f "Time: %E" su - postgres -c 'pg_dump -Fd -f /var/opt/osm/backup --jobs=4 --compress=none -d osm'
+  echo Compressing backup...
+  /usr/bin/time -f "Time: %E" zstdmt --rm -r --no-progress /var/opt/osm/backup
+fi
+
+echo Reseeding tiles...
+BASEPATH=`realpath $(dirname $0)`
+$BASEPATH/seed.sh
+
+echo
+echo Finished update on `date`
